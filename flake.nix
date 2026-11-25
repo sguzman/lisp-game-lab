@@ -15,6 +15,15 @@
               sbcl raylib pkg-config gnumake stdenv.cc emacs-nox
             ];
           };
+        } // nixpkgs.lib.optionalAttrs pkgs.stdenv.isLinux {
+          # Use the matching Nix Mesa implementation in headless CI only.
+          # Interactive development must retain the host GPU driver.
+          ci = pkgs.mkShell {
+            packages = with pkgs; [
+              sbcl raylib pkg-config gnumake stdenv.cc emacs-nox
+              mesa.llvmpipeHook
+            ];
+          };
         });
     };
 }

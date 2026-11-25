@@ -19,6 +19,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: cachix/install-nix-action@v31
+      - name: Resolve and record Nix lock
+        run: |
+          nix flake lock
+          cat flake.lock
+          if git ls-files --error-unmatch flake.lock >/dev/null 2>&1; then
+            git diff --exit-code -- flake.lock
+          fi
       - run: nix develop -c make check
       - name: Compile playground
         run: nix develop -c sbcl --noinform --non-interactive --eval '(require :asdf)' --eval '(asdf:load-asd (truename "lisp-game-lab.asd"))' --eval '(asdf:load-system "lisp-game-lab/playground")'
@@ -27,4 +34,4 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y xvfb xauth
-          LIBGL_ALWAYS_SOFTWARE=1 xvfb-run -a nix develop -c make smoke
+          xvfb-run -a -s '-screen 0 1280x720x24 +extension GLX' nix develop .#ci -c make smoke

@@ -21,9 +21,13 @@
     (lab.raylib:open-window lab.core:+width+ lab.core:+height+
                             "Lisp Game Lab")
     (unwind-protect
-         (loop for frame from 0
-               until (or (and frame-limit (>= frame frame-limit))
-                         (lab.raylib:should-close-p))
-               do (update-world world)
-                  (render-world world))
+         (let ((frames 0))
+           (loop until (or (and frame-limit (>= frames frame-limit))
+                           (lab.raylib:should-close-p))
+                 do (update-world world)
+                    (render-world world)
+                    (incf frames))
+           (when frame-limit
+             (assert (= frames frame-limit))
+             (format t "~&Rendered ~D frames successfully.~%" frames)))
       (lab.raylib:close-window))))
