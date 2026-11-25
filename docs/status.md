@@ -1,32 +1,37 @@
 # Current state
 
-Active: experiment 01 (foundation).
+Active: experiment 01 (foundation), local QA gate.
 
 ## Verified evidence
 
-[CI run 45679462842](https://github.com/sguzman/lisp-game-lab/actions/runs/45679462842), commit `b591470`:
+[CI run 45680276205](https://github.com/sguzman/lisp-game-lab/actions/runs/45680276205), code commit `c308cb1`:
 
 | Gate | Linux | macOS |
 | --- | --- | --- |
-| Nix shell | Pass | Pass |
-| Style, domain tests, native adapter and ABI probe | Pass | Pass |
-| Compile playground | Pass | Pass |
-| Bounded graphical smoke | Fail: GLX framebuffer unavailable | Not run |
+| Committed lockfile, style, unit tests, native bridge, ABI probe | Pass | queued; prior run passed |
+| Playground compilation | Pass | queued; prior run passed |
+| Bounded graphical smoke | Pass: exactly 3 frames | Not configured |
 
-Linux Raylib initialization reached GLFW, which reported no GLXFBConfigs; no game frames were rendered. The macOS job succeeded in full for its configured gates. No visual QA has occurred.
+Linux job 139438669650 logged "World tests passed.", "Raylib bridge ABI probe passed.", Mesa llvmpipe (LLVM 21.1.8) and "Rendered 3 frames successfully." The original GLX failure is resolved in hosted Linux CI. The Nix lockfile is tracked and validated against HEAD. Prior macOS job 139435973587 passed its build and ABI gates; the current macOS job must still be checked if unfinished.
 
-## Current iteration
+[Raylib binding assessment](raylib-bindings.md) records the provisional baseline decision. No comparative binding runtime test has been performed yet.
 
-[CI run 45680088856](https://github.com/sguzman/lisp-game-lab/actions/runs/45680088856), commit `dd1d149`: Linux successfully generated flake.lock, then failed the drift check because Nix automatically makes newly generated locks visible to Git. The graphical fix was not exercised. macOS was still running when inspected.
+## Local visual/input QA
 
-Recovered the exact generated lockfile from Linux job 139438006582, committed it and changed CI to check drift against HEAD. See [binding assessment](raylib-bindings.md) for the source-only comparison; no dependency change was made.
+On the Linux development machine, clone or update the repository and run:
 
-The separate Mesa CI shell and exact-frame smoke assertion are still awaiting execution.
+```sh
+nix develop -c make run
+```
+
+Expected: an 800x480 window, dark background, amber square, heading, arrow keys move the square and stop at the viewport edges, Escape closes the window. Confirm that the window opens, the controls work, and the process exits cleanly. The ordinary shell does not force software rendering. If graphics initialization fails, retain the terminal output; use the separate CI shell as a diagnostic only (`nix develop .#ci -c make run`), not the preferred GPU configuration.
+
+No local visual/input QA has been reported yet. Linux on the user's host (including GPU integration) is not proven by hosted CI.
 
 ## Next unfinished gates
 
-1. Inspect CI against the committed lockfile; resolve actual failures and verify the bounded graphical smoke.
-2. Batch first local visual/input QA; document Linux host graphics integration if needed.
-3. Advance the rendering experiment only after the foundation gate is met.
+1. Obtain local QA and inspect the current macOS CI result.
+2. Fix any real failures before marking experiment 01 complete.
+3. Advance to experiment 02 (rendering) and the narrow existing-binding trial after foundation acceptance.
 
 Windows distribution and macOS graphical execution remain unverified. See [roadmap](roadmap.md).
