@@ -9,7 +9,8 @@ Completed: experiment 06 (object playground).
 Completed: experiment 07 (scene DSL).
 Completed: experiment 08 (automated audio gates; audible QA deferred to final batch).
 Completed: experiment 09 (benchmark harness and measured baseline).
-Active next: experiment 10 (distribution).
+Completed: experiment 10 (native build/run evidence; macOS GUI limitation documented).
+Active final gate: one combined Linux playable release and audible QA.
 
 ## Verified evidence
 
@@ -297,3 +298,18 @@ Added release composition root combining object manipulation and audio (successf
 ## Experiment 10 — distribution retry
 
 Run 45717526458: Windows native build and relocated self-test passed; ordinary graphical smoke failed with GLFW WGL 65542 (driver lacks OpenGL support). Linux/macOS isolated Nix builds failed while ASDF loaded the release; truncated logs hide exact cause. Assign writable isolated HOME/cache and enable full logs. Add separate CI-only Windows Mesa fallback attempt, leaving original release artifact untouched. Full regression run 45717526415 passed on Linux and macOS. Next: inspect retry results; no local QA until packaged Linux smoke passes. No Nix lock change.
+
+## Experiment 10 — native distribution evidence accepted; final local QA
+
+[Distribution run 45718400937](https://github.com/sguzman/lisp-game-lab/actions/runs/45718400937), code commit `f91e909`: all three native builds, relocated executable self-tests and artifact uploads passed. Linux x86_64 job 139570248580 also passed 180 packaged frames with null-device audio using Mesa llvmpipe. Windows x86_64 job 139570248042 passed native relocation with toolchain PATH and SBCL_HOME removed, and four packaged graphical frames with CI-only Mesa llvmpipe; the original hardware-driver launch failed WGL 65542. macOS ARM64 job 139570248611 passed relocated headless execution, but the graphical launch failed NSGL 65545 (no suitable pixel format). Do not treat continue-on-error as graphical success. macOS GUI and Windows/macOS audible output remain unverified; no macOS hardware host is available. The writable build-local HOME/cache correction resolved Unix build failure. [Regression run 45718401081](https://github.com/sguzman/lisp-game-lab/actions/runs/45718401081) passed both Linux and macOS.
+
+All ten approved experiments have automated/native evidence under the stated scope. Final local gate is a single integrated playable release, not another set of engineering tests. Pull required:
+
+```fish
+cd ~/Code/Games/lisp-game-lab/lisp-game-lab-clean
+and git pull --ff-only origin main
+and nix develop .#ci -c make release
+and nix develop .#ci -c env XDG_SESSION_TYPE=x11 build/release/lisp-game-lab
+```
+
+Play briefly: drag objects onto supports or into empty space, rotate while held if desired, listen for background ambience and the effect on successful drops. M toggles ambience, V mutes, Up/Down adjusts volume, Space plays the effect, Escape exits. Just report whether it plays and sounds as expected; no screenshots, log dumps or repeating deterministic tests needed. If an error actually occurs, report it. On user confirmation, persist final acceptance and limitations, then stop the approved roadmap. Hardware rendering on user's Linux host, Windows native driver and macOS GUI remain explicitly unverified. Nix closure required for Unix packages; CI zip alone is not universal distribution. No production game implementation authorized.

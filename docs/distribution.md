@@ -27,3 +27,15 @@ References: [SBCL manual](https://www.sbcl.org/manual/index.html), [MSYS2 SBCL](
 ## First distribution trial and corrective action
 
 [Run 45717526458](https://github.com/sguzman/lisp-game-lab/actions/runs/45717526458): Windows native build and relocated headless self-test passed (ABI 6, assets, stacking, absence of development packages). Its ordinary graphical launch failed with GLFW WGL error 65542 (host driver does not support OpenGL); the step's continue-on-error makes the job green, not the graphical test. Linux and macOS Nix derivation builds failed during ASDF loading, with only the final 25 lines visible. The next trial assigns a writable build-local HOME and XDG cache (hypothesis, not confirmed root cause) and enables full Nix build logs. Windows additionally attempts Mesa llvmpipe using a separate CI-only folder after uploading the original hardware-driver bundle; the software DLLs are not shipped in that bundle. See [MSYS2 UCRT64 Mesa package](https://packages.msys2.org/packages/mingw-w64-ucrt-x86_64-mesa) for the provided OpenGL and Gallium DLLs.
+
+## Verified native release evidence — 2026-11-25
+
+[Distribution CI 45718400937](https://github.com/sguzman/lisp-game-lab/actions/runs/45718400937), revision `f91e9098f98644cb22c11d15e041b8999d4f6c17`.
+
+| Target | Native build | Relocated executable self-test | Packaged GUI | Packaged audio | Artifact |
+| --- | --- | --- | --- | --- | --- |
+| Linux x86_64 | Pass | Pass | Pass, 180 frames, Xvfb/llvmpipe | Pass, null device; not audible | [12,521,717 bytes](https://github.com/sguzman/lisp-game-lab/actions/runs/45718400937/artifacts/15070249473) |
+| macOS ARM64 | Pass | Pass | Failed: NSGL 65545, no suitable pixel format | Not run | [12,276,265 bytes](https://github.com/sguzman/lisp-game-lab/actions/runs/45718400937/artifacts/15070349318) |
+| Windows x86_64 | Pass | Pass, system-only PATH and SBCL_HOME unset | Pass, 4 frames with CI-only llvmpipe; original driver failed WGL 65542 | Not run | [14,132,621 bytes](https://github.com/sguzman/lisp-game-lab/actions/runs/45718400937/artifacts/15070328250) |
+
+Artifacts are CI candidates, subject to retention. The Windows artifact does not include the Mesa fallback used for testing. The Unix artifacts retain Nix closure requirements. The macOS executable runs headlessly outside the source tree; graphical compatibility cannot be established on this runner. No claim of hardware acceleration, signing, broad OS compatibility, audible output on all platforms or production-ready redistributables. The final local Linux QA combines gameplay and actual audible playback. Separate [regression CI 45718401081](https://github.com/sguzman/lisp-game-lab/actions/runs/45718401081) passed both configured platforms.
