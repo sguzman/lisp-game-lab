@@ -8,7 +8,8 @@ Completed: experiment 05 (interactive development).
 Completed: experiment 06 (object playground).
 Completed: experiment 07 (scene DSL).
 Completed: experiment 08 (automated audio gates; audible QA deferred to final batch).
-Active: experiment 09 (benchmarks).
+Completed: experiment 09 (benchmark harness and measured baseline).
+Active next: experiment 10 (distribution).
 
 ## Verified evidence
 
@@ -284,3 +285,7 @@ Added pure Lisp mixer policy, streamed looping ambience, effect playback, master
 ## Experiment 09 — benchmark harness implemented
 
 Added three isolated cold/warm ASDF load trials, headless code reload/room migration/data asset installation sample distributions, SBCL allocation and live heap counters, and 64-object capped/uncapped graphics benchmarks. CI records the host environment and executes all relevant workloads. ABI 6 adds frame cap control; no Nix changes. See docs/benchmarks.md for metric definitions and limits. No benchmark values claimed before execution. Next: verify CI and persist measured baseline.
+
+## Experiment 09 — accepted benchmark baseline
+
+[CI run 45716780965](https://github.com/sguzman/lisp-game-lab/actions/runs/45716780965), code commit `cbd4907`, passed Linux job 139564753215 and macOS job 139564753632. All benchmark workloads succeeded where configured. ASDF median cold/warm: Linux 333.998/26.999 ms; macOS 429.527/29.957 ms. Linux software graphics: 343.52 FPS uncapped, 60.12 FPS capped, uncapped p95 3 ms. Heap after full GC approximately 29 MiB Linux and 37 MiB macOS. See docs/benchmarks.md for full samples, allocation totals, host details and clock granularity limitation. Linux reload zero medians are below observed timer granularity, not zero cost. No human benchmark QA needed for the hosted baseline. Next: experiment 10, native distribution evidence; final audible QA remains outstanding. No pull required.
