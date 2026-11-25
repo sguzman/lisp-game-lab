@@ -11,3 +11,5 @@ This repository is a standalone Common Lisp game-development laboratory. Follow 
 - Commit coherent changes and verify the remote ref. Preserve the user's existing files and batch visual QA.
 - Keep README concise; maintain status and findings in docs, not in the README.
 - If CI is pending or unavailable, report that rather than claiming green. Stop when the agreed experiment criteria are satisfied.
+
+- For human QA, explicitly state whether a pull is required and provide the exact command. Prefer text confirmation over screenshots/log uploads when the user's connection is constrained.

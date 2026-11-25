@@ -28,11 +28,11 @@ Expected: an 800x480 window, dark background, amber square, heading, arrow keys 
 
 Local QA report: all six Lisp source files compiled in 0–6 ms per file and the C bridge compiled and loaded. GLFW then failed to obtain an EGL display (65542), so no window was rendered. Fontconfig also emitted configuration warnings; these are not the fatal error. This is a host graphics initialization failure, not a Lisp compile failure.
 
-First diagnostic, with no Nix input changes: `nix develop -c env XDG_SESSION_TYPE=x11 make run`. GLFW 3.4 selects X11 when both backends are compiled in and DISPLAY is available. On Hyprland this uses XWayland. If that fails, try the existing software-rendering CI shell: `nix develop .#ci -c env XDG_SESSION_TYPE=x11 make run`. The latter may require additional cached packages. Neither workaround has been tested on the user's host; investigate host GL vendor/driver integration if needed. Do not change system graphics drivers or lockfile merely to diagnose this.
+First diagnostic, with no Nix input changes: `nix develop -c env XDG_SESSION_TYPE=x11 make run`. GLFW 3.4 selects X11 when both backends are compiled in and DISPLAY is available. On Hyprland this uses XWayland. If that fails, try the existing software-rendering CI shell: `nix develop .#ci -c env XDG_SESSION_TYPE=x11 make run`. The latter may require additional cached packages. User subsequently confirmed the second command (CI software-rendering shell with X11 session selection) worked, without pulling the documentation-only commit. No screenshot or full log was uploaded due to connectivity. Window operation is user-reported; individual input/boundary/shutdown checks and hardware-accelerated rendering are not independently confirmed. The result supports using this route for interim development; it does not isolate the underlying EGL/vendor failure. Investigate host GL integration separately without forcing a dependency upgrade. Do not change system graphics drivers or lockfile merely to diagnose this.
 
 ## Next unfinished gates
 
-1. Obtain local QA and inspect the current macOS CI result.
+1. Record the remaining input/boundary/exit checks by simple text confirmation when available; no upload required.
 2. Fix any real failures before marking experiment 01 complete.
 3. Advance to experiment 02 (rendering) and the narrow existing-binding trial after foundation acceptance.
 
@@ -40,4 +40,4 @@ Windows distribution and macOS graphical execution remain unverified. See [roadm
 
 ## Nix release policy
 
-Per user direction, flake.nix now names nixos-26.05 and flake.lock retains the identical previously verified locked revision and hash. Only the original input reference metadata changed; CI must confirm no lockfile rewrite. The local build completed; graphical initialization failed as described above.
+Per user direction, flake.nix now names nixos-26.05 and flake.lock retains the identical previously verified locked revision and hash. Only the original input reference metadata changed. [CI run 45681665724](https://github.com/sguzman/lisp-game-lab/actions/runs/45681665724) passed every Linux gate including lock validation and graphical smoke; the macOS job was cancelled, with the earlier macOS build/ABI pass still the available evidence. Local software-rendering startup is user-confirmed.
