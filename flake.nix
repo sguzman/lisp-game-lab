@@ -7,6 +7,26 @@
     let
       systems = [ "x86_64-linux" "aarch64-linux" "x86_64-darwin" "aarch64-darwin" ];
     in {
+      packages = nixpkgs.lib.genAttrs systems (system:
+        let pkgs = import nixpkgs { inherit system; };
+        in {
+          release = pkgs.stdenv.mkDerivation {
+            pname = "lisp-game-lab";
+            version = "0.1.0";
+            src = self;
+            nativeBuildInputs = with pkgs; [ sbcl pkg-config gnumake ];
+            buildInputs = [ pkgs.raylib ];
+            buildPhase = "make release";
+            installPhase = ''
+              mkdir -p "$out/bin"
+              cp -R build/release/. "$out/bin/"
+            '';
+            # Keep the embedded SBCL core intact; native store dependencies
+            # remain referenced by the executable and bridge.
+            dontFixup = true;
+          };
+          default = self.packages.${system}.release;
+        });
       devShells = nixpkgs.lib.genAttrs systems (system:
         let pkgs = import nixpkgs { inherit system; };
         in {

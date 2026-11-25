@@ -4,7 +4,11 @@ EMACS ?= emacs
 CC ?= cc
 BUILD := build
 UNAME := $(shell uname -s)
-ifeq ($(UNAME),Darwin)
+ifeq ($(OS),Windows_NT)
+SHIM := $(BUILD)/lab-raylib.dll
+SHARED := -shared -Wl,--export-all-symbols
+EXE := .exe
+else ifeq ($(UNAME),Darwin)
 SHIM := $(BUILD)/liblab-raylib.dylib
 SHARED := -dynamiclib
 else
@@ -12,7 +16,7 @@ SHIM := $(BUILD)/liblab-raylib.so
 SHARED := -shared
 endif
 
-.PHONY: check test style format native abi run smoke render render-smoke live live-smoke assets assets-smoke console console-smoke objects objects-smoke rooms rooms-smoke audio audio-smoke bench-build bench-headless bench-graphics clean
+.PHONY: check test style format native abi run smoke render render-smoke live live-smoke assets assets-smoke console console-smoke objects objects-smoke rooms rooms-smoke audio audio-smoke bench-build bench-headless bench-graphics release clean
 
 check: style test abi
 
@@ -90,6 +94,14 @@ bench-headless:
 
 bench-graphics: native
 	LAB_RAYLIB_BRIDGE="$(abspath $(SHIM))" LAB_BENCH_GRAPHICS=1 $(SBCL) --noinform --non-interactive --load scripts/benchmarks.lisp
+
+release: native
+	mkdir -p $(BUILD)/release/assets
+	cp $(SHIM) $(BUILD)/release/
+	cp assets/04-assets/high.wav $(BUILD)/release/assets/effect.wav
+	cp assets/08-audio/ambience.wav $(BUILD)/release/assets/ambience.wav
+	cp LICENSE $(BUILD)/release/LICENSE
+	$(SBCL) --noinform --non-interactive --load scripts/release.lisp
 
 clean:
 	rm -rf $(BUILD)

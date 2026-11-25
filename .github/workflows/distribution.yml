@@ -1,0 +1,93 @@
+name: Distribution
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: distribution-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  unix:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-24.04, macos-15]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: cachix/install-nix-action@v31
+      - name: Build native Nix package
+        run: |
+          nix build .#release
+          git diff --exit-code HEAD -- flake.lock
+          nix path-info -Sh ./result
+          mkdir -p "$RUNNER_TEMP/lab-release"
+          cp -R result/bin/. "$RUNNER_TEMP/lab-release/"
+          ls -lh "$RUNNER_TEMP/lab-release"
+      - name: Run relocated executable from outside source tree
+        working-directory: ${{ runner.temp }}
+        run: ./lab-release/lisp-game-lab --self-test
+      - name: Linux packaged graphics and audio smoke
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y xvfb xauth
+          xvfb-run -a -s '-screen 0 1280x720x24 +extension GLX' nix develop .#ci -c env ALSA_CONFIG_PATH="$PWD/scripts/alsa-null.conf" "$RUNNER_TEMP/lab-release/lisp-game-lab" --audio-smoke
+      - name: macOS packaged graphical smoke
+        if: runner.os == 'macOS'
+        continue-on-error: true
+        working-directory: ${{ runner.temp }}
+        run: ./lab-release/lisp-game-lab --smoke
+      - uses: actions/upload-artifact@v4
+        with:
+          name: nix-release-${{ matrix.os }}
+          path: ${{ runner.temp }}/lab-release/
+  windows:
+    runs-on: windows-2025
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: msys2/setup-msys2@v2
+        with:
+          msystem: UCRT64
+          update: true
+          install: >-
+            make
+            mingw-w64-ucrt-x86_64-gcc
+            mingw-w64-ucrt-x86_64-pkgconf
+            mingw-w64-ucrt-x86_64-sbcl
+            mingw-w64-ucrt-x86_64-raylib
+      - name: Native Windows build and DLL collection
+        shell: msys2 {0}
+        run: |
+          pacman -Q mingw-w64-ucrt-x86_64-sbcl mingw-w64-ucrt-x86_64-raylib mingw-w64-ucrt-x86_64-gcc
+          make test
+          make release OS=Windows_NT CC=gcc
+          sh scripts/bundle-windows.sh
+      - name: Relocate Windows bundle and self-test without toolchain PATH
+        shell: pwsh
+        run: |
+          $dest = Join-Path $env:RUNNER_TEMP 'lab-release'
+          New-Item -ItemType Directory -Force $dest | Out-Null
+          Copy-Item build/release/* $dest -Recurse
+          $env:PATH = "$env:SystemRoot\System32;$env:SystemRoot"
+          Remove-Item Env:SBCL_HOME -ErrorAction SilentlyContinue
+          Set-Location $env:RUNNER_TEMP
+          & "$dest\lisp-game-lab.exe" --self-test
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - name: Windows packaged graphical smoke
+        continue-on-error: true
+        shell: pwsh
+        run: |
+          $env:PATH = "$env:SystemRoot\System32;$env:SystemRoot"
+          Remove-Item Env:SBCL_HOME -ErrorAction SilentlyContinue
+          Set-Location $env:RUNNER_TEMP
+          & "$env:RUNNER_TEMP\lab-release\lisp-game-lab.exe" --smoke
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - uses: actions/upload-artifact@v4
+        with:
+          name: windows-x86_64-release
+          path: ${{ runner.temp }}/lab-release/

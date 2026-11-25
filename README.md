@@ -37,6 +37,7 @@ The first playground is a small window with a movable square. Arrow keys move it
 | `make bench-build` | Three cold/warm ASDF load trials |
 | `make bench-headless` | Reload and migration latency benchmarks |
 | `make bench-graphics` | Capped and uncapped frame timings |
+| `make release` | Build standalone executable and assets |
 | `make smoke` | Open a window, render three frames and exit (display required) |
 
 Run these from the repository root inside the Nix shell. Linux is the primary development platform; macOS and Windows are planned targets, not yet validated releases.
@@ -47,5 +48,6 @@ Run these from the repository root inside the Nix shell. Linux is the primary de
 - [Conventions](docs/conventions.md): Lisp style, testing and tools.
 - [Roadmap](docs/roadmap.md): experiments and acceptance criteria.
 - [Current state](docs/status.md): evidence and next unfinished step.
+- [Distribution](docs/distribution.md): native executable build and portability.
 
 The initial Raylib adapter uses a deliberately small C ABI shim and SBCL's native FFI. All gameplay is Lisp. The shim is an experiment, not a commitment to writing a game in C. Established Lisp bindings will be evaluated before expanding the adapter.

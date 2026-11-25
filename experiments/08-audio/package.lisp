@@ -1,3 +1,3 @@
 (defpackage #:lab.audio-demo
   (:use #:cl)
-  (:export #:run))
+  (:export #:run #:apply-gains #:update-audio))

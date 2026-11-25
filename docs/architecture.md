@@ -72,3 +72,7 @@ The versioned room DSL is a single data-only S-expression, with bounded input an
 ### Experiment 08: audio mixer and stream
 
 The headless mixer holds integer master volume, mute and ambience state; gain computation uses independent relative effect and ambience levels. The Raylib adapter owns opaque Sound and Music handles; streamed ambience is updated on the window thread each frame and configured to loop. Muting changes gain, not playback state; toggling ambience stops or restarts the stream. Resources are stopped and unloaded before closing the audio device, even on partial acquisition. The two buses are deliberately small, not a polyphonic voice allocator or production mixer. Null-device CI tests transport state and loop progression, not actual sound pressure or perceived quality.
+
+### Experiment 10: executable delivery
+
+The release ASDF root loads the core and reusable object/audio presentation only. SBCL saves a native executable with a dedicated toplevel and no development REPL or hot-reload packages. Native resources are loaded after restart from paths relative to the running core. The Nix derivation retains the runtime closure and avoids post-processing the executable's appended core; Windows uses a separate native UCRT64 toolchain and collects DLL dependencies. See [distribution](distribution.md) for the candidate packaging contract and portability limits.

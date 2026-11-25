@@ -108,3 +108,10 @@
   :serial t
   :components ((:file "experiments/09-benchmarks/package")
                (:file "experiments/09-benchmarks/main")))
+
+(asdf:defsystem "lisp-game-lab/release"
+  :description "Standalone playable laboratory demonstration"
+  :depends-on ("lisp-game-lab/objects" "lisp-game-lab/audio")
+  :serial t
+  :components ((:file "experiments/10-release/package")
+               (:file "experiments/10-release/main")))
