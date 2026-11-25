@@ -16,3 +16,7 @@ These are small, independently demonstrable experiments, not a production engine
 | 10 | Distribution | Native Linux/Windows/macOS build and run evidence; document portability limitations |
 
 Proceed in order unless a dependency forces a documented change. See [current state](status.md) for the active milestone. Compare existing Common Lisp Raylib bindings before extending the primitive bridge. Keep production game assets out of this public repository.
+
+## Closure
+
+All ten experiments accepted on 2026-11-25, with platform limitations recorded in [conclusions](conclusions.md). No approved experiments remain. New work requires a new scope.

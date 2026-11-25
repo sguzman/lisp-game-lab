@@ -10,7 +10,8 @@ Completed: experiment 07 (scene DSL).
 Completed: experiment 08 (automated audio gates; audible QA deferred to final batch).
 Completed: experiment 09 (benchmark harness and measured baseline).
 Completed: experiment 10 (native build/run evidence; macOS GUI limitation documented).
-Active final gate: one combined Linux playable release and audible QA.
+Final local release QA: accepted (2026-11-25).
+Campaign status: complete; no further approved experiments pending.
 
 ## Verified evidence
 
@@ -313,3 +314,11 @@ and nix develop .#ci -c env XDG_SESSION_TYPE=x11 build/release/lisp-game-lab
 ```
 
 Play briefly: drag objects onto supports or into empty space, rotate while held if desired, listen for background ambience and the effect on successful drops. M toggles ambience, V mutes, Up/Down adjusts volume, Space plays the effect, Escape exits. Just report whether it plays and sounds as expected; no screenshots, log dumps or repeating deterministic tests needed. If an error actually occurs, report it. On user confirmation, persist final acceptance and limitations, then stop the approved roadmap. Hardware rendering on user's Linux host, Windows native driver and macOS GUI remain explicitly unverified. Nix closure required for Unix packages; CI zip alone is not universal distribution. No production game implementation authorized.
+
+## Final acceptance — 2026-11-25
+
+User responded "done" to the single combined playable release QA and supplied the local terminal transcript. It records a fast-forward to `da757d9`, successful native bridge compilation and standalone SBCL executable build, successful 800x480 window initialization using GLFW/X11 and Mesa llvmpipe (LLVM 21.1.8), miniaudio/PulseAudio device initialization (48 kHz output, stereo), successful loading of the effect WAV (22050 Hz, mono) and ambient stream (16000 Hz, mono, 16000 frames), followed by audio stream unload, device closure, graphics resource cleanup and window closure. No failure appears in the supplied transcript. Accept the user's completion report as the manual gate; exact subjective sound quality and individual gestures are not independently observable from terminal output. Do not require further human QA.
+
+All ten approved experiments are complete under the documented laboratory scope. See [conclusions](conclusions.md) for the decision, supporting evidence and limitations. The final acceptance commit is documentation-only; runtime code last changed at `f91e909`. Regression CI 45718401081 and distribution CI 45718400937 passed their required gates. macOS graphical launch failed NSGL 65545; Windows hardware-driver launch failed WGL 65542, software rendering passed. User Linux hardware acceleration remains unverified. These limits are not erased by the successful native executable checks.
+
+Stop the continuation campaign here. No further pull, implementation, experiments or human action required. Production For Keeps architecture/language selection remains the user's decision and is outside this laboratory's authorization.

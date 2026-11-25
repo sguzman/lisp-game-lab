@@ -39,3 +39,7 @@ References: [SBCL manual](https://www.sbcl.org/manual/index.html), [MSYS2 SBCL](
 | Windows x86_64 | Pass | Pass, system-only PATH and SBCL_HOME unset | Pass, 4 frames with CI-only llvmpipe; original driver failed WGL 65542 | Not run | [14,132,621 bytes](https://github.com/sguzman/lisp-game-lab/actions/runs/45718400937/artifacts/15070328250) |
 
 Artifacts are CI candidates, subject to retention. The Windows artifact does not include the Mesa fallback used for testing. The Unix artifacts retain Nix closure requirements. The macOS executable runs headlessly outside the source tree; graphical compatibility cannot be established on this runner. No claim of hardware acceleration, signing, broad OS compatibility, audible output on all platforms or production-ready redistributables. The final local Linux QA combines gameplay and actual audible playback. Separate [regression CI 45718401081](https://github.com/sguzman/lisp-game-lab/actions/runs/45718401081) passed both configured platforms.
+
+## Final local acceptance
+
+On 2026-11-25 the user completed the combined release QA at checkout `da757d9`. The supplied log shows successful compilation, window creation (GLFW/X11, llvmpipe), PulseAudio initialization, loading both packaged WAV assets, and orderly stream, device, graphics and window shutdown. The user's completion response is accepted as the manual check; no independent recording of audible quality or individual input events was supplied. No further local QA is required. The platform limitations above remain unchanged.

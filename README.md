@@ -49,5 +49,6 @@ Run these from the repository root inside the Nix shell. Linux is the primary de
 - [Roadmap](docs/roadmap.md): experiments and acceptance criteria.
 - [Current state](docs/status.md): evidence and next unfinished step.
 - [Distribution](docs/distribution.md): native executable build and portability.
+- [Conclusions](docs/conclusions.md): completed experiment ledger and language viability decision.
 
 The initial Raylib adapter uses a deliberately small C ABI shim and SBCL's native FFI. All gameplay is Lisp. The shim is an experiment, not a commitment to writing a game in C. Established Lisp bindings will be evaluated before expanding the adapter.
