@@ -1,0 +1,44 @@
+SHELL := /bin/sh
+SBCL ?= sbcl
+EMACS ?= emacs
+CC ?= cc
+BUILD := build
+UNAME := $(shell uname -s)
+ifeq ($(UNAME),Darwin)
+SHIM := $(BUILD)/liblab-raylib.dylib
+SHARED := -dynamiclib
+else
+SHIM := $(BUILD)/liblab-raylib.so
+SHARED := -shared
+endif
+
+.PHONY: check test style format native abi run smoke clean
+
+check: style test abi
+
+test:
+	$(SBCL) --noinform --non-interactive --load scripts/test.lisp
+
+style:
+	$(EMACS) --batch -Q --script scripts/style.el
+
+format:
+	LAB_FORMAT=1 $(EMACS) --batch -Q --script scripts/style.el
+
+native: $(SHIM)
+
+$(SHIM): native/raylib-bridge.c
+	mkdir -p $(BUILD)
+	$(CC) $(CPPFLAGS) $(CFLAGS) -std=c11 -Wall -Wextra -Werror -fPIC $(SHARED) -o $@ $< $$(pkg-config --cflags --libs raylib) $(LDFLAGS)
+
+abi: native
+	LAB_RAYLIB_BRIDGE="$(abspath $(SHIM))" $(SBCL) --noinform --non-interactive --load scripts/abi.lisp
+
+run: native
+	LAB_RAYLIB_BRIDGE="$(abspath $(SHIM))" $(SBCL) --noinform --non-interactive --load scripts/run.lisp
+
+smoke: native
+	LAB_RAYLIB_BRIDGE="$(abspath $(SHIM))" LAB_SMOKE=1 $(SBCL) --noinform --non-interactive --load scripts/run.lisp
+
+clean:
+	rm -rf $(BUILD)
