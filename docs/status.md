@@ -1,7 +1,8 @@
 # Current state
 
 Completed: experiment 01 (foundation, with software-rendering development path).
-Active: experiment 02 (rendering), local visual QA gate.
+Completed: experiment 02 (rendering).
+Active next: experiment 03 (live code).
 
 ## Verified evidence
 
@@ -33,8 +34,8 @@ First diagnostic, with no Nix input changes: `nix develop -c env XDG_SESSION_TYP
 
 ## Next unfinished gates
 
-1. Obtain the experiment 02 local visual/input QA described in the latest entry.
-2. Upon acceptance, advance to experiment 03 (live code); retain foundation and rendering regression tests.
+1. Implement experiment 03: replace behavior in a running Lisp image while preserving state identity, with failure recovery.
+2. Retain foundation and rendering regression tests; batch human QA.
 3. Track hardware-accelerated Linux graphics integration separately; the confirmed software-rendering path is sufficient for initial 2D experiments. Do not block rendering work on this or request duplicate foundation QA.
 
 Windows distribution and macOS graphical execution remain unverified. See [roadmap](roadmap.md).
@@ -75,3 +76,11 @@ nix develop .#ci -c env XDG_SESSION_TYPE=x11 make render
 ```
 
 Expected: pixel-art tiled floor, rug, overlapping crate and plant sprites; arrow keys pan across the room, Escape exits. A simple text confirmation is sufficient. No Nix inputs changed; reuse the already working software-rendering shell. Hardware-accelerated host graphics remain a separate unresolved issue. On acceptance, proceed to experiment 03.
+
+## Experiment 02 — accepted local QA (2026-11-25)
+
+The user confirmed arrow-key camera panning and supplied a screenshot showing the tiled floor, rug, plant and crate with the expected foreground overlap. Local terminal evidence shows successful compilation, X11 initialization with Mesa llvmpipe, loading all four 32x32 RGBA textures, unloading all four texture IDs and clean window shutdown. Rendering acceptance is complete. Hardware acceleration remains unverified, and the precise prior SIGFPE cause remains unproven.
+
+The original checkout had an unresolved HEAD and staged files. It was preserved; the user recovered a separate clean checkout, on main tracking origin/main, via a local clone of the previously fetched Git objects. Future QA should use that recovered checkout (lisp-game-lab-clean), not the original directory. No destructive cleanup is needed. Explicitly identify pull requirements; use fast-forward-only pulls and stop if they fail. No new QA or pull required for this documentation-only acceptance commit.
+
+Next: experiment 03, live code replacement with state identity and failure recovery.
