@@ -4,7 +4,8 @@ Completed: experiment 01 (foundation, with software-rendering development path).
 Completed: experiment 02 (rendering).
 Completed: experiment 03 (live code).
 Completed: experiment 04 (live assets).
-Active: experiment 05 (interactive development), local QA gate.
+Completed: experiment 05 (interactive development).
+Active next: experiment 06 (object playground).
 
 ## Verified evidence
 
@@ -36,8 +37,8 @@ First diagnostic, with no Nix input changes: `nix develop -c env XDG_SESSION_TYP
 
 ## Next unfinished gates
 
-1. Implement experiment 05: opt-in local REPL/inspector, main-thread command queue and safe shutdown.
-2. Retain foundation, rendering, live-code and live-asset regression tests; batch human QA.
+1. Implement experiment 06: deterministic object manipulation, drag/drop, rotation and stacking.
+2. Retain foundation, rendering, live-code, live-asset and interactive console regression tests; batch human QA.
 3. Track hardware-accelerated Linux graphics integration separately; the confirmed software-rendering path is sufficient for initial 2D experiments. Do not block rendering work on this or request duplicate foundation QA.
 
 Windows distribution and macOS graphical execution remain unverified. See [roadmap](roadmap.md).
@@ -189,3 +190,9 @@ and nix develop .#ci -c env XDG_SESSION_TYPE=x11 make console
 ```
 
 Use the same terminal that launched the window, not another shell. Focus the terminal and submit one Lisp expression per line: (state), (teleport 100 100), (+ 20 30), (error "test"), (move 150 80), (quit). The intentional error should not close the window; movement after the error should work, and quit should close the application and return to fish. No new Nix dependencies. Text confirmation sufficient. If terminal input is not accepted or quit hangs, report it; do not assume the string-stream CI smoke covers real TTY behavior. Next: accept interactive QA, then experiment 06.
+
+## Experiment 05 — accepted local QA (2026-11-25)
+
+User confirmed every interactive test worked. The real terminal log records (state) returning (368,208), teleport to (100,100), arithmetic returning 50, intentional error reported without closing the application, movement to (250,180), and quit returning :STOPPING followed by successful texture/shader cleanup and window closure. Screenshot confirms the teleported square and command count 2. The real terminal gate is satisfied in addition to the Linux/macOS CI evidence. No repeat QA required. The local evaluator is trusted, opt-in and not sandboxed; macOS graphical execution and Linux hardware acceleration remain unverified.
+
+Next: experiment 06, object playground (drag/drop, rotate, stack, deterministic domain tests). No pull required for this documentation-only acceptance commit.
