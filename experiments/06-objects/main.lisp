@@ -13,14 +13,15 @@
         ((lab.raylib:cancel-pressed-p) (lab.objects:cancel-drag board))
         ((lab.raylib:mouse-released-p) (lab.objects:drop-held board))))))
 
-(defun draw-board (board)
+(defun draw-board (board &key
+                           (title "06 | Drag with mouse | R rotate | C cancel | Esc exit")
+                           (subtitle (format nil "Placement: ~A | Brown/teal support stacks"
+                                             (lab.objects:board-status board))))
   (lab.raylib:begin-frame)
   (unwind-protect
        (progn
-         (lab.raylib:draw-label "06 | Drag with mouse | R rotate | C cancel | Esc exit")
-         (lab.raylib:draw-object-label
-          (format nil "Placement: ~A | Brown/teal support stacks"
-                  (lab.objects:board-status board)) 20 44)
+         (lab.raylib:draw-label title)
+         (lab.raylib:draw-object-label subtitle 20 44)
          (dolist (item (lab.objects:draw-order board))
            (multiple-value-bind (w h) (lab.objects:dimensions item)
              (lab.raylib:draw-object

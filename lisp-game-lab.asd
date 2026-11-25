@@ -6,7 +6,8 @@
   :components ((:file "src/core/package")
                (:file "src/core/world")
                (:file "src/core/scene")
-               (:file "src/core/objects"))
+               (:file "src/core/objects")
+               (:file "src/core/room"))
   :in-order-to ((asdf:test-op (asdf:test-op "lisp-game-lab/tests"))))
 
 (asdf:defsystem "lisp-game-lab/raylib"
@@ -31,6 +32,7 @@
                (:file "tests/assets")
                (:file "tests/console")
                (:file "tests/objects")
+               (:file "tests/room")
                (:file "tests/world"))
   :perform (asdf:test-op (operation component)
              (declare (ignore operation component))
@@ -83,3 +85,10 @@
   :serial t
   :components ((:file "experiments/06-objects/package")
                (:file "experiments/06-objects/main")))
+
+(asdf:defsystem "lisp-game-lab/rooms"
+  :description "Declarative scene reload experiment"
+  :depends-on ("lisp-game-lab/objects" "lisp-game-lab/asset-reload")
+  :serial t
+  :components ((:file "experiments/07-rooms/package")
+               (:file "experiments/07-rooms/main")))

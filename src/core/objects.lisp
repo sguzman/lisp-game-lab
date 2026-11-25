@@ -5,7 +5,7 @@
            #:item-stackable-p #:item-color #:dimensions
            #:make-board #:board-items #:board-held #:board-status
            #:pick-item #:drag-to #:rotate-held #:drop-held #:cancel-drag
-           #:draw-order #:make-demo-board))
+           #:draw-order #:make-demo-board #:validate-items #:migrate-items))
 
 (in-package #:lab.objects)
 
@@ -160,3 +160,80 @@
                             :color 2)
                 (make-item :id 4 :x 340 :y 330 :width 112 :height 64
                             :color 3))))
+
+(defun validate-items (items)
+  "Validate settled placements before following support chains."
+  (let ((ids (make-hash-table))
+        (children (make-hash-table)))
+    (dolist (item items)
+      (unless (and (typep (item-id item) '(integer 1 9999))
+                   (not (gethash (item-id item) ids))
+                   (integerp (item-x item)) (integerp (item-y item))
+                   (typep (item-width item) '(integer 24 800))
+                   (typep (item-height item) '(integer 24 480))
+                   (typep (item-turn item) '(integer 0 3))
+                   (typep (item-color item) '(integer 0 3))
+                   (member (item-stackable-p item) '(nil t))
+                   (or (null (item-support item))
+                       (typep (item-support item) '(integer 1 9999)))
+                   (in-bounds-p item))
+        (error "Invalid or duplicate item ~A." (item-id item)))
+      (setf (gethash (item-id item) ids) item))
+    (dolist (item items)
+      (when (item-support item)
+        (let ((base (gethash (item-support item) ids)))
+          (unless (and base (not (eq base item))
+                       (item-stackable-p base)
+                       (not (gethash (item-id base) children))
+                       (contains-item-p base item))
+            (error "Invalid support for item ~D." (item-id item)))
+          (setf (gethash (item-id base) children) t))))
+    (dolist (item items)
+      (let ((seen (list (item-id item))))
+        (loop for parent = (item-support item)
+                then (item-support (gethash parent ids))
+              while parent
+              do (when (member parent seen)
+                   (error "Cyclic support chain."))
+                 (push parent seen))))
+    (let ((board (make-board :items items)))
+      (loop for tail on items
+            for a = (first tail)
+            do (dolist (b (rest tail))
+                 (when (and (overlaps-p a b)
+                            (not (ancestor-p board a b))
+                            (not (ancestor-p board b a)))
+                   (error "Unrelated items ~D and ~D overlap."
+                          (item-id a) (item-id b)))))))
+  items)
+
+(defun migrate-items (board definitions)
+  "Stage the entire room before publishing changes to live instances."
+  (when (board-held board)
+    (error "Scene migration must wait until the current drag ends."))
+  (validate-items definitions)
+  (let* ((originals (board-items board))
+         (staged
+           (loop for definition in definitions
+                 for old = (find (item-id definition) originals :key #'item-id)
+                 collect (let ((candidate (copy-item definition)))
+                           (when old
+                             (setf (item-x candidate) (item-x old)
+                                   (item-y candidate) (item-y old)
+                                   (item-turn candidate) (item-turn old)
+                                   (item-support candidate) (item-support old)))
+                           candidate))))
+    (validate-items staged)
+    (let ((published
+            (loop for candidate in staged
+                  collect (or (find (item-id candidate) originals :key #'item-id)
+                              candidate))))
+      (loop for candidate in staged
+            for target in published
+            do (setf (item-width target) (item-width candidate)
+                     (item-height target) (item-height candidate)
+                     (item-color target) (item-color candidate)
+                     (item-stackable-p target) (item-stackable-p candidate)))
+      (setf (board-items board) published
+            (board-status board) :reloaded))
+    board))

@@ -1,0 +1,6 @@
+(:room 1
+  (:item 1 100 150 160 112 0 0 t nil)
+  (:item 2 340 150 96 56 0 1 t nil)
+  (:item 3 540 150 56 40 0 3 nil nil)
+  (:item 5 60 340 96 64 0 2 nil nil)
+  (:item 6 650 330 96 64 0 2 nil nil))

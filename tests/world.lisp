@@ -25,4 +25,5 @@
   (test-assets)
   (test-console)
   (test-objects)
+  (test-room)
   t)
