@@ -2,7 +2,8 @@
 
 Completed: experiment 01 (foundation, with software-rendering development path).
 Completed: experiment 02 (rendering).
-Active: experiment 03 (live code), local QA gate.
+Completed: experiment 03 (live code).
+Active next: experiment 04 (live assets).
 
 ## Verified evidence
 
@@ -34,8 +35,8 @@ First diagnostic, with no Nix input changes: `nix develop -c env XDG_SESSION_TYP
 
 ## Next unfinished gates
 
-1. Implement experiment 03: replace behavior in a running Lisp image while preserving state identity, with failure recovery.
-2. Retain foundation and rendering regression tests; batch human QA.
+1. Implement experiment 04: replace textures, audio and scene data without restarting; retain working assets on invalid replacements.
+2. Retain foundation, rendering and live-code regression tests; batch human QA.
 3. Track hardware-accelerated Linux graphics integration separately; the confirmed software-rendering path is sufficient for initial 2D experiments. Do not block rendering work on this or request duplicate foundation QA.
 
 Windows distribution and macOS graphical execution remain unverified. See [roadmap](roadmap.md).
@@ -110,3 +111,11 @@ Leave the game open. In a separate terminal in the same checkout, replace the di
 - `(lambda (dx dy) (values (* 2 dx) (* 2 dy)))`: ACCEPTED, slower movement without restarting.
 
 Text confirmation is sufficient; no screenshot necessary. The file is deliberately trusted local Lisp, not a sandbox. Exit with Escape. Next: accept local QA and check the macOS result; then advance to experiment 04 (live assets).
+
+## Experiment 03 — accepted local QA (2026-11-25)
+
+The user confirmed all three interactive tests worked. Their terminal evidence records ACCEPTED revision 2, REJECTED at unchanged revision 2, ACCEPTED revision 3, and successful window shutdown. The prior automated smoke independently asserted preservation of world identity and positions. The initial QA commands in the second terminal failed because relative paths were resolved outside the checkout; absolute paths fixed the issue without modifying the program. For future multi-terminal QA use explicit absolute paths or a single guarded directory change for each terminal. No additional local QA is necessary for this milestone.
+
+macOS job 139512890449: success. Graphical execution on macOS and host hardware acceleration remain unverified. No new dependencies or changes to the Nix lock.
+
+Next: experiment 04 (live assets). No pull required for this documentation-only commit.
