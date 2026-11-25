@@ -3,7 +3,8 @@
 Completed: experiment 01 (foundation, with software-rendering development path).
 Completed: experiment 02 (rendering).
 Completed: experiment 03 (live code).
-Active: experiment 04 (live assets), local QA gate.
+Completed: experiment 04 (live assets).
+Active next: experiment 05 (interactive development).
 
 ## Verified evidence
 
@@ -35,8 +36,8 @@ First diagnostic, with no Nix input changes: `nix develop -c env XDG_SESSION_TYP
 
 ## Next unfinished gates
 
-1. Implement experiment 04: replace textures, audio and scene data without restarting; retain working assets on invalid replacements.
-2. Retain foundation, rendering and live-code regression tests; batch human QA.
+1. Implement experiment 05: opt-in local REPL/inspector, main-thread command queue and safe shutdown.
+2. Retain foundation, rendering, live-code and live-asset regression tests; batch human QA.
 3. Track hardware-accelerated Linux graphics integration separately; the confirmed software-rendering path is sufficient for initial 2D experiments. Do not block rendering work on this or request duplicate foundation QA.
 
 Windows distribution and macOS graphical execution remain unverified. See [roadmap](roadmap.md).
@@ -164,3 +165,9 @@ cp "$lab/assets/04-assets/position-a.txt" "$lab/build/assets-live/position.txt"
 ````
 
 Confirm crate, original fixed position and low tone return without a restart. If audio initialization fails, report the error; do not silently disable audio or change host drivers. Text confirmation sufficient. Next: accept QA, check macOS result and move to experiment 05.
+
+## Experiment 04 — accepted local QA (2026-11-25)
+
+User confirmed completion and provided screenshots at accepted revisions 2 and 3, showing the plant/crate swap and fixed-square coordinate change. Local terminal evidence: PulseAudio backend initialized (48 kHz stereo); valid PNG/WAV/data accepted at revisions 1 and 2; intentionally corrupted PNG/WAV/data rejected at unchanged revision 2; repaired assets accepted at revision 3; old textures unloaded; audio device and window closed cleanly. No crash occurred. Audio resource replacement is verified; the user did not explicitly report hearing the two tones, so audible output remains to be confirmed in experiment 08. The warnings during intentional invalid input are expected. Accept the live asset transaction milestone; no repeat QA required.
+
+macOS job 139519106218: success. macOS graphical execution and Linux hardware acceleration remain unverified. No Nix dependency changes. Next: experiment 05, opt-in local interactive development with queued main-thread operations and safe shutdown. No pull required for this documentation-only acceptance commit.
