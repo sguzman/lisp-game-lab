@@ -4,7 +4,7 @@ Completed: experiment 01 (foundation, with software-rendering development path).
 Completed: experiment 02 (rendering).
 Completed: experiment 03 (live code).
 Completed: experiment 04 (live assets).
-Active next: experiment 05 (interactive development).
+Active: experiment 05 (interactive development), local QA gate.
 
 ## Verified evidence
 
@@ -175,3 +175,17 @@ macOS job 139519106218: success. macOS graphical execution and Linux hardware ac
 ## Experiment 05 — initial implementation
 
 Added opt-in terminal Lisp evaluator, bounded FIFO, nonblocking reader thread, owner-thread inspection and manipulation, one-expression-per-line evaluation and error reporting. No sockets, native ABI or dependency changes. The graphical smoke uses a real reader thread with a string input stream, queues five commands (inspection, movement, intentional error, teleport, quit), verifies outcomes and world identity, then closes the reader/window. Headless tests cover capacity, FIFO, EOF, owner-thread rejection, failed command recovery and closed sessions. Local terminal behavior remains unverified until QA; arbitrary trusted code is not sandboxed or preemptible. Next: verify CI; then batch terminal QA in recovered checkout with explicit pull. No human action yet.
+
+## Experiment 05 — CI verified; local QA ready
+
+[CI run 45708051657](https://github.com/sguzman/lisp-game-lab/actions/runs/45708051657), code commit `be4b18c`, succeeded on Linux (job 139534989997) and macOS (job 139534990394). Both passed headless console queue, evaluation, owner isolation and shutdown tests, ABI and compilation. Linux additionally passed all graphical regressions and console smoke: real reader thread queued five expressions, evaluated state and movement, reported intentional error, teleported to (448,238), processed quit and preserved world identity. macOS graphical execution is still untested. The smoke uses a string input stream, so terminal interaction and shutdown with real stdin remain local QA.
+
+Pull required, in the recovered checkout:
+
+```fish
+cd ~/Code/Games/lisp-game-lab/lisp-game-lab-clean
+and git pull --ff-only origin main
+and nix develop .#ci -c env XDG_SESSION_TYPE=x11 make console
+```
+
+Use the same terminal that launched the window, not another shell. Focus the terminal and submit one Lisp expression per line: (state), (teleport 100 100), (+ 20 30), (error "test"), (move 150 80), (quit). The intentional error should not close the window; movement after the error should work, and quit should close the application and return to fish. No new Nix dependencies. Text confirmation sufficient. If terminal input is not accepted or quit hangs, report it; do not assume the string-stream CI smoke covers real TTY behavior. Next: accept interactive QA, then experiment 06.
