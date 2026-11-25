@@ -1,7 +1,7 @@
 {
   description = "Common Lisp game development laboratory";
-  # Stable nixos-26.05 revision; intentionally immutable even before lock generation.
-  inputs.nixpkgs.url = "github:NixOS/nixpkgs/0dc498bfe49baeb18b0f9891e800b53bb2603193";
+  # Track a stable release branch; flake.lock fixes the exact revision.
+  inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixos-26.05";
 
   outputs = { self, nixpkgs }:
     let

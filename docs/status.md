@@ -35,3 +35,7 @@ No local visual/input QA has been reported yet. Linux on the user's host (includ
 3. Advance to experiment 02 (rendering) and the narrow existing-binding trial after foundation acceptance.
 
 Windows distribution and macOS graphical execution remain unverified. See [roadmap](roadmap.md).
+
+## Nix release policy
+
+Per user direction, flake.nix now names nixos-26.05 and flake.lock retains the identical previously verified locked revision and hash. Only the original input reference metadata changed; CI must confirm no lockfile rewrite. The user reported the local build is underway; visual/input QA remains pending.

@@ -4,6 +4,7 @@ This repository is a standalone Common Lisp game-development laboratory. Follow 
 
 - Read docs/status.md and docs/architecture.md before resuming. Continue the first unfinished approved experiment.
 - Use ASDF, SBCL and explicit packages. Keep platform/FFI code outside game state.
+- Use a stable Nixpkgs release branch (currently nixos-26.05) and keep the committed lockfile unchanged during ordinary work. Coordinate deliberate updates to reuse the user's existing Nix store where possible.
 - Keep dependencies pinned; no Quicklisp bootstrap from a floating URL, no npm, no Python tooling.
 - Run make check and applicable smoke tests. Record actual commands/results and distinguish static review, automated execution and visual QA.
 - Do not expose any remote Lisp evaluator; future interactive tooling must bind loopback by default, be opt-in and never ship in releases.
