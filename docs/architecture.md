@@ -42,3 +42,5 @@ SBCL's SB-ALIEN API plus a small C shim isolates ABI issues (Raylib passes struc
 ## Testing
 
 Headless domain tests exercise rules; adapter probes test linking; bounded window smoke exercises initialization, rendering and cleanup. Visual QA verifies actual pixels and interaction. Future tests should cover reload failure recovery, resource lifetime, migration, and deterministic save/load. Cross-platform compilation is distinct from native execution and portable release packaging.
+
+See [Raylib binding assessment](raylib-bindings.md) for the pinned upstream source comparison and provisional decision.

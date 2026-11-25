@@ -17,15 +17,16 @@ Linux Raylib initialization reached GLFW, which reported no GLXFBConfigs; no gam
 
 ## Current iteration
 
-Added a separate Linux CI shell with the pinned Nixpkgs Mesa llvmpipe setup hook, explicitly configured Xvfb's 24-bit screen/GLX, and made the bounded smoke assert the exact number of rendered frames. The regular development shell does not force software rendering. CI now prints the real generated lockfile for persistence and checks for drift once it is tracked.
+[CI run 45680088856](https://github.com/sguzman/lisp-game-lab/actions/runs/45680088856), commit `dd1d149`: Linux successfully generated flake.lock, then failed the drift check because Nix automatically makes newly generated locks visible to Git. The graphical fix was not exercised. macOS was still running when inspected.
 
-These changes require a new CI run. No graphics success is claimed yet.
+Recovered the exact generated lockfile from Linux job 139438006582, committed it and changed CI to check drift against HEAD. See [binding assessment](raylib-bindings.md) for the source-only comparison; no dependency change was made.
+
+The separate Mesa CI shell and exact-frame smoke assertion are still awaiting execution.
 
 ## Next unfinished gates
 
-1. Inspect new CI and fix any failures; recover and commit the generated flake.lock from CI logs.
-2. Verify CI against the committed lockfile.
-3. Batch first local visual/input QA; document Linux host graphics integration if needed.
-4. Advance the rendering experiment only after the foundation gate is met.
+1. Inspect CI against the committed lockfile; resolve actual failures and verify the bounded graphical smoke.
+2. Batch first local visual/input QA; document Linux host graphics integration if needed.
+3. Advance the rendering experiment only after the foundation gate is met.
 
 Windows distribution and macOS graphical execution remain unverified. See [roadmap](roadmap.md).

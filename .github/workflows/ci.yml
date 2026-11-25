@@ -23,9 +23,8 @@ jobs:
         run: |
           nix flake lock
           cat flake.lock
-          if git ls-files --error-unmatch flake.lock >/dev/null 2>&1; then
-            git diff --exit-code -- flake.lock
-          fi
+          git ls-files --error-unmatch flake.lock
+          git diff --exit-code HEAD -- flake.lock
       - run: nix develop -c make check
       - name: Compile playground
         run: nix develop -c sbcl --noinform --non-interactive --eval '(require :asdf)' --eval '(asdf:load-asd (truename "lisp-game-lab.asd"))' --eval '(asdf:load-system "lisp-game-lab/playground")'
