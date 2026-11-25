@@ -1,0 +1,45 @@
+name: Raylib binding trial
+on:
+  push:
+    paths:
+      - '.github/workflows/binding-trial.yml'
+      - 'scripts/binding-trial.sh'
+      - 'scripts/binding-trial.lisp'
+      - 'flake.nix'
+      - 'flake.lock'
+      - 'assets/02-rendering/**'
+  pull_request:
+    paths:
+      - '.github/workflows/binding-trial.yml'
+      - 'scripts/binding-trial.sh'
+      - 'scripts/binding-trial.lisp'
+      - 'flake.nix'
+      - 'flake.lock'
+      - 'assets/02-rendering/**'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  fosskers:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          repository: fosskers/raylib
+          ref: 4ab295114348a84a1d2a6d1472fd1610a5c706ff
+          path: build/binding-trial/raylib
+          persist-credentials: false
+      - uses: actions/checkout@v4
+        with:
+          repository: trivial-garbage/trivial-garbage
+          ref: f0663f7b0c900ed78ac19f6db306e7c6cac999fd
+          path: build/binding-trial/trivial-garbage
+          persist-credentials: false
+      - uses: cachix/install-nix-action@v31
+      - name: Compile and run pinned binding against Nix Raylib
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y xvfb xauth
+          xvfb-run -a -s '-screen 0 1280x720x24 +extension GLX' nix develop .#ci -c sh scripts/binding-trial.sh
