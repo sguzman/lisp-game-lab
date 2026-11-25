@@ -65,12 +65,17 @@
          (<= (item-y item) y) (< y (+ (item-y item) h)))))
 
 (defun pick-item (board x y)
+  "Return the selected item, or NIL on an unsuccessful pickup."
   (unless (board-held board)
     (let ((item (find-if (lambda (i) (hit-p i x y))
                          (reverse (draw-order board)))))
       (cond
-        ((null item) (setf (board-status board) :empty))
-        ((child-of board item) (setf (board-status board) :occupied))
+        ((null item)
+         (setf (board-status board) :empty)
+         nil)
+        ((child-of board item)
+         (setf (board-status board) :occupied)
+         nil)
         (t
          (setf (board-held board) item
                (board-snapshot board)

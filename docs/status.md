@@ -200,3 +200,7 @@ Next: experiment 06, object playground (drag/drop, rotate, stack, deterministic 
 ## Experiment 06 — initial implementation
 
 Added deterministic headless board and item model with stable identity, mouse hit testing, drag offsets, quarter-turn rotation around the grabbed pixel, single-support stacking, bounds/overlap rejection and exact rollback. Four colored rectangular fixtures expose rotation and stacking without new art. Supports with children cannot be picked independently. Graphical smoke exercises drag/rotate/stack/reject/detach; headless tests cover rotation closure, hit order, occupied supports, rollback and cancel. ABI bumped to 4 for primitive mouse/keyboard and object drawing calls. No Nix changes. Next: inspect CI, fix actual failures, then batch local mouse QA using the recovered checkout. No human action yet.
+
+## Experiment 06 — selection contract correction
+
+[CI run 45709269740](https://github.com/sguzman/lisp-game-lab/actions/runs/45709269740), Linux job 139539175087, passed lock validation and the previous headless tests, then failed the new object test because PICK-ITEM returned :EMPTY (the SETF value) rather than NIL. The same defect existed in the occupied-support branch. Both branches now record their status and explicitly return NIL. Added assertions for empty pickup, occupied pickup and attempting a second pickup during a drag. The graphical smoke was skipped on the failing run; the correction remains unverified until new CI. No dependency changes or local QA required yet.
