@@ -1,7 +1,7 @@
 # Current state
 
 Completed: experiment 01 (foundation, with software-rendering development path).
-Active next: experiment 02 (rendering).
+Active: experiment 02 (rendering), local visual QA gate.
 
 ## Verified evidence
 
@@ -33,8 +33,8 @@ First diagnostic, with no Nix input changes: `nix develop -c env XDG_SESSION_TYP
 
 ## Next unfinished gates
 
-1. Advance to experiment 02: narrow existing-binding trial, texture rendering, layers, camera and draw ordering using disposable assets.
-2. Retain the passing baseline and headless/graphical CI checks; batch local visual QA.
+1. Obtain the experiment 02 local visual/input QA described in the latest entry.
+2. Upon acceptance, advance to experiment 03 (live code); retain foundation and rendering regression tests.
 3. Track hardware-accelerated Linux graphics integration separately; the confirmed software-rendering path is sufficient for initial 2D experiments. Do not block rendering work on this or request duplicate foundation QA.
 
 Windows distribution and macOS graphical execution remain unverified. See [roadmap](roadmap.md).
@@ -62,3 +62,16 @@ The [binding trial](https://github.com/sguzman/lisp-game-lab/actions/runs/456907
 The repeat regression [run 45690735940](https://github.com/sguzman/lisp-game-lab/actions/runs/45690735940), Linux job 139475365762, passed lock validation, headless tests, ABI, both compilations, and the foundation smoke, but the rendering process exited 136 (SIGFPE) after successfully loading all four textures. This contradicts a claim of consistently passing smoke. macOS was still in progress at inspection.
 
 Mitigation: SBCL trap masking scoped to the full native window session (before creating driver threads), restored on exit. Headless tests retain normal arithmetic behavior. This is a hypothesis, not a proven root cause. Separate the foundation virtual display from rendering and require five consecutive rendering processes to succeed in the latter. No input/lock changes. Next: verify the mitigation in CI, then issue explicit pull and visual QA commands. If it fails, collect a native stack trace rather than hiding the failure with retries.
+
+## Experiment 02 — stress test passed; local QA ready
+
+[CI run 45691089838](https://github.com/sguzman/lisp-game-lab/actions/runs/45691089838), code commit `e35b172`, completed successfully on both platforms. Linux job 139476433299 passed world and scene tests, ABI probe, both compilation steps, the foundation smoke and five consecutive rendering processes, each reporting 3 frames and 4 unique textures. macOS job 139476432682 passed lock validation, style, world/scene tests, ABI probe and both compilation steps; graphical execution remains untested on macOS. The scoped floating-point mitigation held in these five launches; exact SIGFPE root cause remains unproven.
+
+Local QA (pull required):
+
+```sh
+git pull --ff-only
+nix develop .#ci -c env XDG_SESSION_TYPE=x11 make render
+```
+
+Expected: pixel-art tiled floor, rug, overlapping crate and plant sprites; arrow keys pan across the room, Escape exits. A simple text confirmation is sufficient. No Nix inputs changed; reuse the already working software-rendering shell. Hardware-accelerated host graphics remain a separate unresolved issue. On acceptance, proceed to experiment 03.
