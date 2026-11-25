@@ -22,11 +22,12 @@
                (:file "experiments/01-playground/main")))
 
 (asdf:defsystem "lisp-game-lab/tests"
-  :depends-on ("lisp-game-lab" "lisp-game-lab/reload")
+  :depends-on ("lisp-game-lab" "lisp-game-lab/reload" "lisp-game-lab/asset-reload")
   :serial t
   :components ((:file "tests/package")
                (:file "tests/scene")
                (:file "tests/reload")
+               (:file "tests/assets")
                (:file "tests/world"))
   :perform (asdf:test-op (operation component)
              (declare (ignore operation component))
@@ -49,3 +50,14 @@
   :serial t
   :components ((:file "experiments/03-live/package")
                (:file "experiments/03-live/main")))
+
+(asdf:defsystem "lisp-game-lab/asset-reload"
+  :description "Headless asset replacement protocol"
+  :components ((:file "src/dev/assets")))
+
+(asdf:defsystem "lisp-game-lab/live-assets"
+  :description "Live texture, sound and data experiment"
+  :depends-on ("lisp-game-lab" "lisp-game-lab/raylib" "lisp-game-lab/asset-reload")
+  :serial t
+  :components ((:file "experiments/04-assets/package")
+               (:file "experiments/04-assets/main")))

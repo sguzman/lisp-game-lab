@@ -2,5 +2,5 @@
 (asdf:load-asd (truename "lisp-game-lab.asd"))
 (asdf:load-system "lisp-game-lab/raylib")
 (lab.raylib:load-bridge (uiop:getenv "LAB_RAYLIB_BRIDGE"))
-(assert (= 2 (lab.raylib:abi-version)))
+(assert (= 3 (lab.raylib:abi-version)))
 (format t "~&Raylib bridge ABI probe passed.~%")

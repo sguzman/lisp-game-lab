@@ -7,7 +7,7 @@
   (unless *bridge-loaded-p*
     (sb-alien:load-shared-object (truename pathname))
     (setf *bridge-loaded-p* t))
-  (unless (= 2 (abi-version))
+  (unless (= 3 (abi-version))
     (error "Incompatible Raylib bridge ABI."))
   t)
 
@@ -61,3 +61,31 @@ Restore SBCL's prior trap settings on exit; headless logic is unaffected."
   `(sb-int:with-float-traps-masked (:invalid :divide-by-zero :overflow
                                    :underflow :inexact)
      ,@body))
+
+(sb-alien:define-alien-routine ("lab_open_audio" %open-audio) sb-alien:int)
+(sb-alien:define-alien-routine ("lab_close_audio" close-audio) sb-alien:void)
+(sb-alien:define-alien-routine ("lab_sound_trigger" %sound-trigger) sb-alien:int)
+
+(sb-alien:define-alien-routine ("lab_load_sound" %load-sound)
+    sb-alien:system-area-pointer
+  (path sb-alien:c-string))
+
+(sb-alien:define-alien-routine ("lab_unload_sound" unload-sound) sb-alien:void
+  (handle sb-alien:system-area-pointer))
+
+(sb-alien:define-alien-routine ("lab_play_sound" play-sound) sb-alien:void
+  (handle sb-alien:system-area-pointer))
+
+(defun open-audio ()
+  (unless (= 1 (%open-audio))
+    (error "Raylib failed to initialize an audio device."))
+  t)
+
+(defun sound-trigger-p ()
+  (not (zerop (%sound-trigger))))
+
+(defun load-sound (path)
+  (let ((handle (%load-sound (namestring (truename path)))))
+    (when (zerop (sb-sys:sap-int handle))
+      (error "Could not load sound ~A." path))
+    handle))

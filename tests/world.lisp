@@ -22,4 +22,5 @@
   (format t "~&World tests passed.~%")
   (test-scene)
   (test-reload)
+  (test-assets)
   t)

@@ -119,3 +119,7 @@ The user confirmed all three interactive tests worked. Their terminal evidence r
 macOS job 139512890449: success. Graphical execution on macOS and host hardware acceleration remain unverified. No new dependencies or changes to the Nix lock.
 
 Next: experiment 04 (live assets). No pull required for this documentation-only commit.
+
+## Experiment 04 — initial implementation
+
+Added a generic asset transaction slot, byte-snapshot polling, strict scene position data, native sound loading/playback/disposal, two original tone fixtures, and a separate live asset scene using an existing movable world object. The four-frame smoke swaps PNG/WAV/data, rejects invalid bytes, checks that the resource identities and revisions survive rejection, then repairs them. Headless tests exercise disposal and data validation; CI will use a null ALSA device to exercise the sound path without speakers. ABI bumped to 3; no Nix inputs changed. Next: inspect CI, address actual failures, then batch local visual/audio QA with absolute paths. No human action yet.
