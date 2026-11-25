@@ -21,7 +21,7 @@ jobs:
       - uses: cachix/install-nix-action@v31
       - name: Build native Nix package
         run: |
-          nix build .#release
+          nix build -L .#release
           git diff --exit-code HEAD -- flake.lock
           nix path-info -Sh ./result
           mkdir -p "$RUNNER_TEMP/lab-release"
@@ -91,3 +91,26 @@ jobs:
         with:
           name: windows-x86_64-release
           path: ${{ runner.temp }}/lab-release/
+      - name: Prepare CI-only software OpenGL fallback
+        shell: msys2 {0}
+        run: |
+          pacman -S --noconfirm --needed mingw-w64-ucrt-x86_64-mesa
+          pacman -Q mingw-w64-ucrt-x86_64-mesa
+          mkdir -p build/mesa-smoke
+          cp -R build/release/. build/mesa-smoke/
+          cp /ucrt64/bin/opengl32.dll /ucrt64/bin/libgallium_wgl.dll build/mesa-smoke/
+          sh scripts/bundle-windows.sh build/mesa-smoke
+      - name: Windows software-rendered packaged smoke
+        shell: pwsh
+        continue-on-error: true
+        run: |
+          $dest = Join-Path $env:RUNNER_TEMP 'lab-mesa-smoke'
+          New-Item -ItemType Directory -Force $dest | Out-Null
+          Copy-Item build/mesa-smoke/* $dest -Recurse
+          $env:PATH = "$env:SystemRoot\System32;$env:SystemRoot"
+          $env:GALLIUM_DRIVER = "llvmpipe"
+          $env:LIBGL_ALWAYS_SOFTWARE = "1"
+          Remove-Item Env:SBCL_HOME -ErrorAction SilentlyContinue
+          Set-Location $env:RUNNER_TEMP
+          & "$dest\lisp-game-lab.exe" --smoke
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }

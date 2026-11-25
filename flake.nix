@@ -16,7 +16,14 @@
             src = self;
             nativeBuildInputs = with pkgs; [ sbcl pkg-config gnumake ];
             buildInputs = [ pkgs.raylib ];
-            buildPhase = "make release";
+            buildPhase = ''
+              runHook preBuild
+              export HOME="$TMPDIR/lab-home"
+              export XDG_CACHE_HOME="$HOME/.cache"
+              mkdir -p "$XDG_CACHE_HOME"
+              make release
+              runHook postBuild
+            '';
             installPhase = ''
               mkdir -p "$out/bin"
               cp -R build/release/. "$out/bin/"

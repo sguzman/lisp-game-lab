@@ -293,3 +293,7 @@ Added three isolated cold/warm ASDF load trials, headless code reload/room migra
 ## Experiment 10 — candidate distribution implemented
 
 Added release composition root combining object manipulation and audio (successful drops trigger effects), native SBCL executable delivery with bundle-relative resources, Nix package output, Windows UCRT64 build/DLL collection and separate distribution CI. Release self-test checks ABI, assets, stacking and absence of dev packages from outside the source directory. Linux packaged audio/graphics smoke is required; macOS/Windows graphics attempts are recorded separately. No Nix lock changes. Unix output retains the Nix closure; Windows portability and GUI availability are unverified. Windows toolchain is rolling, version evidence captured, not Nix-pinned. Next: inspect native distribution CI, fix actual failures and record honest per-OS evidence; final brief audible/gameplay QA. No human action yet.
+
+## Experiment 10 — distribution retry
+
+Run 45717526458: Windows native build and relocated self-test passed; ordinary graphical smoke failed with GLFW WGL 65542 (driver lacks OpenGL support). Linux/macOS isolated Nix builds failed while ASDF loaded the release; truncated logs hide exact cause. Assign writable isolated HOME/cache and enable full logs. Add separate CI-only Windows Mesa fallback attempt, leaving original release artifact untouched. Full regression run 45717526415 passed on Linux and macOS. Next: inspect retry results; no local QA until packaged Linux smoke passes. No Nix lock change.
