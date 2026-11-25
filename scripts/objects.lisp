@@ -1,0 +1,5 @@
+(require :asdf)
+(asdf:load-asd (truename "lisp-game-lab.asd"))
+(asdf:load-system "lisp-game-lab/objects")
+(lab.object-demo:run (uiop:getenv "LAB_RAYLIB_BRIDGE")
+                     :smoke (uiop:getenv "LAB_SMOKE"))

@@ -2,7 +2,7 @@
 #include <stdlib.h>
 
 /* Only primitive ABI values cross the language boundary. */
-int lab_abi_version(void) { return 3; }
+int lab_abi_version(void) { return 4; }
 
 int lab_open(int width, int height, const char *title) {
     InitWindow(width, height, title);
@@ -87,3 +87,28 @@ void lab_unload_sound(void *handle) {
 }
 
 void lab_play_sound(void *handle) { PlaySound(*(Sound *)handle); }
+
+int lab_mouse_x(void) { return GetMouseX(); }
+int lab_mouse_y(void) { return GetMouseY(); }
+int lab_mouse_pressed(void) { return IsMouseButtonPressed(MOUSE_BUTTON_LEFT) ? 1 : 0; }
+int lab_mouse_released(void) { return IsMouseButtonReleased(MOUSE_BUTTON_LEFT) ? 1 : 0; }
+int lab_rotate_pressed(void) { return IsKeyPressed(KEY_R) ? 1 : 0; }
+int lab_cancel_pressed(void) { return IsKeyPressed(KEY_C) ? 1 : 0; }
+
+void lab_draw_object(int x, int y, int w, int h, int color, int turn, int held) {
+    const Color palette[] = {
+        {115, 79, 53, 255}, {49, 120, 131, 255},
+        {220, 166, 83, 255}, {150, 93, 135, 255}
+    };
+    Color fill = palette[(unsigned int)color % 4];
+    DrawRectangle(x, y, w, h, fill);
+    DrawRectangleLines(x, y, w, h, held ? YELLOW : RAYWHITE);
+    /* A corner marker rotates with the object's footprint. */
+    int mx = x + ((turn == 1 || turn == 2) ? w - 12 : 4);
+    int my = y + ((turn == 2 || turn == 3) ? h - 12 : 4);
+    DrawRectangle(mx, my, 8, 8, RAYWHITE);
+}
+
+void lab_draw_object_label(const char *label, int x, int y) {
+    DrawText(label, x, y, 16, RAYWHITE);
+}

@@ -24,4 +24,5 @@
   (test-reload)
   (test-assets)
   (test-console)
+  (test-objects)
   t)

@@ -7,7 +7,7 @@
   (unless *bridge-loaded-p*
     (sb-alien:load-shared-object (truename pathname))
     (setf *bridge-loaded-p* t))
-  (unless (= 3 (abi-version))
+  (unless (= 4 (abi-version))
     (error "Incompatible Raylib bridge ABI."))
   t)
 
@@ -89,3 +89,23 @@ Restore SBCL's prior trap settings on exit; headless logic is unaffected."
     (when (zerop (sb-sys:sap-int handle))
       (error "Could not load sound ~A." path))
     handle))
+
+(sb-alien:define-alien-routine ("lab_mouse_x" mouse-x) sb-alien:int)
+(sb-alien:define-alien-routine ("lab_mouse_y" mouse-y) sb-alien:int)
+(sb-alien:define-alien-routine ("lab_mouse_pressed" %mouse-pressed) sb-alien:int)
+(sb-alien:define-alien-routine ("lab_mouse_released" %mouse-released) sb-alien:int)
+(sb-alien:define-alien-routine ("lab_rotate_pressed" %rotate-pressed) sb-alien:int)
+(sb-alien:define-alien-routine ("lab_cancel_pressed" %cancel-pressed) sb-alien:int)
+
+(defun mouse-pressed-p () (not (zerop (%mouse-pressed))))
+(defun mouse-released-p () (not (zerop (%mouse-released))))
+(defun rotate-pressed-p () (not (zerop (%rotate-pressed))))
+(defun cancel-pressed-p () (not (zerop (%cancel-pressed))))
+
+(sb-alien:define-alien-routine ("lab_draw_object" draw-object) sb-alien:void
+  (x sb-alien:int) (y sb-alien:int) (w sb-alien:int) (h sb-alien:int)
+  (color sb-alien:int) (turn sb-alien:int) (held sb-alien:int))
+
+(sb-alien:define-alien-routine ("lab_draw_object_label" draw-object-label)
+    sb-alien:void
+  (label sb-alien:c-string) (x sb-alien:int) (y sb-alien:int))
