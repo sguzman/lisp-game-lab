@@ -97,9 +97,9 @@
   (let ((item (board-held board)))
     (when item
       (multiple-value-bind (w h) (dimensions item)
+        (declare (ignore w))
         (let ((ox (board-offset-x board))
               (oy (board-offset-y board)))
-          (declare (ignore w))
           ;; Clockwise quarter turn around the grabbed pixel.
           (setf (item-turn item) (mod (1+ (item-turn item)) 4)
                 (board-offset-x board) (- h 1 oy)

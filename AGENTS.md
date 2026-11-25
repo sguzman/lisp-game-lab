@@ -13,3 +13,5 @@ This repository is a standalone Common Lisp game-development laboratory. Follow 
 - If CI is pending or unavailable, report that rather than claiming green. Stop when the agreed experiment criteria are satisfied.
 
 - For human QA, explicitly state whether a pull is required and provide the exact command. Prefer text confirmation over screenshots/log uploads when the user's connection is constrained.
+
+- Minimize human QA: automate deterministic behavior, migration, rejection and cleanup in CI. Reserve brief batched human checks for actual gameplay feel, audible output or otherwise inaccessible host behavior. Do not repeat automated gates manually merely for completeness.

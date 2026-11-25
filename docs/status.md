@@ -6,7 +6,8 @@ Completed: experiment 03 (live code).
 Completed: experiment 04 (live assets).
 Completed: experiment 05 (interactive development).
 Completed: experiment 06 (object playground).
-Active: experiment 07 (scene DSL), local QA gate.
+Completed: experiment 07 (scene DSL).
+Active next: experiment 08 (audio).
 
 ## Verified evidence
 
@@ -38,8 +39,8 @@ First diagnostic, with no Nix input changes: `nix develop -c env XDG_SESSION_TYP
 
 ## Next unfinished gates
 
-1. Implement experiment 07: declarative room descriptions, validation and state-preserving reload migration.
-2. Retain all six completed experiments' regression tests; batch human QA.
+1. Implement experiment 08: effects, looping ambience, volume and resource cleanup.
+2. Retain all seven completed experiments' regression tests; automate verification and minimize manual QA.
 3. Track hardware-accelerated Linux graphics integration separately; the confirmed software-rendering path is sufficient for initial 2D experiments. Do not block rendering work on this or request duplicate foundation QA.
 
 Windows distribution and macOS graphical execution remain unverified. See [roadmap](roadmap.md).
@@ -262,3 +263,11 @@ cp "$lab/assets/07-rooms/initial.room" "$lab/build/room-live.room"
 ```
 
 Object 3 returns to gold at its moved position, item 5 disappears and item 4 returns. Escape closes the game. Text confirmation sufficient, no uploads needed. No Nix dependency changes. Next: accept local QA, then experiment 08 (audio).
+
+## Experiment 07 — accepted local reload QA (2026-11-25)
+
+User reported the room experiment working. Terminal evidence records accepted revisions 1 through 4 and clean window shutdown. The conflict fixture was accepted locally rather than rejected; the moved footprint evidently did not produce the intended conflict (exact local coordinates unavailable). Do not claim local rejection or independent visual identity verification. CI run 45714753492 already proves the conflict rejection and identity preservation via assertions, so no duplicate manual test is required. Accept this milestone on combined evidence. The local log also exposed two nonfatal SBCL style warnings from an IGNORE declaration placed inside the wrong lexical scope in ROTATE-HELD. Corrected declaration placement in this commit; verification deferred to next full CI. No gameplay change intended.
+
+User feedback: repetitive multi-terminal engineering QA is burdensome. Prefer automated assertions and CI for behavior that can be tested there; reserve short, batched manual checks for actual subjective gameplay feel, audible output or otherwise inaccessible host-specific behavior. Do not require repeated screenshots or engineering chores to establish already automated behavior.
+
+Next: experiment 08 (audio), then benchmarks and distribution. Hardware acceleration and macOS graphical execution remain unverified. No pull required now.
