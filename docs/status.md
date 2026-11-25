@@ -3,7 +3,7 @@
 Completed: experiment 01 (foundation, with software-rendering development path).
 Completed: experiment 02 (rendering).
 Completed: experiment 03 (live code).
-Active next: experiment 04 (live assets).
+Active: experiment 04 (live assets), local QA gate.
 
 ## Verified evidence
 
@@ -123,3 +123,44 @@ Next: experiment 04 (live assets). No pull required for this documentation-only 
 ## Experiment 04 — initial implementation
 
 Added a generic asset transaction slot, byte-snapshot polling, strict scene position data, native sound loading/playback/disposal, two original tone fixtures, and a separate live asset scene using an existing movable world object. The four-frame smoke swaps PNG/WAV/data, rejects invalid bytes, checks that the resource identities and revisions survive rejection, then repairs them. Headless tests exercise disposal and data validation; CI will use a null ALSA device to exercise the sound path without speakers. ABI bumped to 3; no Nix inputs changed. Next: inspect CI, address actual failures, then batch local visual/audio QA with absolute paths. No human action yet.
+
+## Experiment 04 — Linux verification passed
+
+[CI run 45703417787](https://github.com/sguzman/lisp-game-lab/actions/runs/45703417787), code commit `03ed414`, Linux job 139519106821 passed all configured gates: locked dependencies, unit tests, ABI 3, all experiment compilations, graphical regressions and live asset smoke. The null audio device initialized and closed. All three asset slots accepted revisions 1 and 2, rejected malformed data at revision 2 while retaining the identical old resource values, and accepted revision 3. Four frames completed with world identity asserted. macOS job 139519106218 was still running at inspection. The silent CI device cannot establish audible playback on the user's host.
+
+### Local QA
+
+Use the recovered checkout and the established software graphics shell; no dependency update. In fish, pull is required:
+
+```fish
+cd ~/Code/Games/lisp-game-lab/lisp-game-lab-clean
+and git pull --ff-only origin main
+and nix develop .#ci -c env XDG_SESSION_TYPE=x11 make assets
+```
+
+Keep the window open. Move the crate with arrows and press Space to hear the low tone. In a second terminal, set an absolute base path:
+
+```fish
+set lab ~/Code/Games/lisp-game-lab/lisp-game-lab-clean
+cp "$lab/assets/02-rendering/plant.png" "$lab/build/assets-live/sprite.png"
+cp "$lab/assets/04-assets/high.wav" "$lab/build/assets-live/effect.wav"
+cp "$lab/assets/04-assets/position-b.txt" "$lab/build/assets-live/position.txt"
+```
+
+Observe plant at retained movable position, changed fixed square position and high tone on Space. Then reject invalid replacements (only ignored disposable files):
+
+```fish
+printf 'invalid' > "$lab/build/assets-live/sprite.png"
+printf 'invalid' > "$lab/build/assets-live/effect.wav"
+printf 'invalid' > "$lab/build/assets-live/position.txt"
+```
+
+All three slots should show REJECTED while the plant, fixed square position and high tone remain working. Restore all three before closing the window:
+
+```fish
+cp "$lab/assets/02-rendering/crate.png" "$lab/build/assets-live/sprite.png"
+cp "$lab/assets/04-assets/low.wav" "$lab/build/assets-live/effect.wav"
+cp "$lab/assets/04-assets/position-a.txt" "$lab/build/assets-live/position.txt"
+````
+
+Confirm crate, original fixed position and low tone return without a restart. If audio initialization fails, report the error; do not silently disable audio or change host drivers. Text confirmation sufficient. Next: accept QA, check macOS result and move to experiment 05.
