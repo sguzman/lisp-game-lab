@@ -5,7 +5,8 @@ Completed: experiment 02 (rendering).
 Completed: experiment 03 (live code).
 Completed: experiment 04 (live assets).
 Completed: experiment 05 (interactive development).
-Active: experiment 06 (object playground), local QA gate.
+Completed: experiment 06 (object playground).
+Active next: experiment 07 (scene DSL).
 
 ## Verified evidence
 
@@ -37,8 +38,8 @@ First diagnostic, with no Nix input changes: `nix develop -c env XDG_SESSION_TYP
 
 ## Next unfinished gates
 
-1. Implement experiment 06: deterministic object manipulation, drag/drop, rotation and stacking.
-2. Retain foundation, rendering, live-code, live-asset and interactive console regression tests; batch human QA.
+1. Implement experiment 07: declarative room descriptions, validation and state-preserving reload migration.
+2. Retain all six completed experiments' regression tests; batch human QA.
 3. Track hardware-accelerated Linux graphics integration separately; the confirmed software-rendering path is sufficient for initial 2D experiments. Do not block rendering work on this or request duplicate foundation QA.
 
 Windows distribution and macOS graphical execution remain unverified. See [roadmap](roadmap.md).
@@ -218,3 +219,9 @@ and nix develop .#ci -c env XDG_SESSION_TYPE=x11 make objects
 ```
 
 In the window: drag the small gold item 3 to an empty region and release (PLACED); hold it again and press R while dragging to rotate its rectangular footprint; drop it wholly inside brown item 1 (STACKED). Try dragging the exposed part of item 1 while item 3 rests on it (OCCUPIED, no movement). Pick item 3 up, drag it so that only part overlaps purple item 4, and release (REJECTED; exact previous stack position and orientation restored). Pick item 3 up again and drop it in an empty region (PLACED; detached); test C during a drag to cancel and restore the original placement. Escape closes the window. Intentional rejected placements are expected, not crashes. No second terminal or screenshot required; text confirmation suffices. No new Nix dependencies. Next: accept local mouse QA, then experiment 07.
+
+## Experiment 06 — accepted local QA (2026-11-25)
+
+The user confirmed all requested mouse interaction tests worked. Screenshots show the gold item 3 successfully moved to an empty region (PLACED), and subsequently rotated and stacked on brown item 1 (label 3 on 1). User confirmation covers the rest of the interactive test sequence; separate terminal logs were not supplied. Combined with passing Linux graphical smoke and Linux/macOS headless and compilation checks in run 45709386243, the object playground acceptance gate is complete. The deliberately limited stacking rule prohibits independently moving an occupied support. The stacked-item label slightly extends beyond its narrow rotated footprint in the screenshot; this is a cosmetic limitation of the debug playground, not a failed placement rule. Hardware-accelerated Linux rendering and macOS graphical execution remain unverified.
+
+Next: experiment 07, declarative scene descriptions with validation and reload migration. No pull required for this documentation-only acceptance commit.
