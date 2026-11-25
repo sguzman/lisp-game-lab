@@ -2,7 +2,7 @@
 
 Completed: experiment 01 (foundation, with software-rendering development path).
 Completed: experiment 02 (rendering).
-Active next: experiment 03 (live code).
+Active: experiment 03 (live code), local QA gate.
 
 ## Verified evidence
 
@@ -90,3 +90,23 @@ Next: experiment 03, live code replacement with state identity and failure recov
 Added development-only anonymous behavior compilation, content-based file polling every 15 frames, validation over the finite input domain, frame-boundary publication and fallback on runtime error. The active CLOS world survives every change; only validated deltas reach it. An ignored build/live-behavior.lisp file is seeded if absent and never overwritten by an ordinary launch. A separate four-frame smoke writes valid, faster, malformed and repaired sources to build/live-smoke-behavior.lisp, asserting movement, revision and identity. Headless tests cover accepted/rejected forms, disabled read-time evaluation, output contract and runtime rollback. This is trusted local code, not a sandbox. No Nix or lockfile changes.
 
 Next: inspect CI and fix actual failures; batch local QA only after verified execution, using the recovered checkout and explicit fast-forward-only pull. No human action yet.
+
+## Experiment 03 — Linux verification passed
+
+[CI run 45701615224](https://github.com/sguzman/lisp-game-lab/actions/runs/45701615224), code commit `a73962e`, Linux job 139512889919: lockfile, headless world/scene/reload tests, ABI, all three compilation steps, foundation smoke, five rendering launches and live smoke passed. Live smoke accepted revisions 1 and 2, rejected malformed source at revision 2, accepted revision 3, and asserted movement and original object identity across all four frames. The macOS job was still running at inspection. No dependency changes.
+
+Local QA: use the recovered checkout, pull required. In fish:
+
+```fish
+cd ~/Code/Games/lisp-game-lab/lisp-game-lab-clean
+and git pull --ff-only origin main
+and nix develop .#ci -c env XDG_SESSION_TYPE=x11 make live
+```
+
+Leave the game open. In a separate terminal in the same checkout, replace the disposable ignored build/live-behavior.lisp file with these expressions in succession (using printf or an editor). Test movement after each:
+
+- `(lambda (dx dy) (values (* 12 dx) (* 12 dy)))`: ACCEPTED, faster movement, position unchanged at publication.
+- `(lambda (dx dy)`: REJECTED, previous speed still works.
+- `(lambda (dx dy) (values (* 2 dx) (* 2 dy)))`: ACCEPTED, slower movement without restarting.
+
+Text confirmation is sufficient; no screenshot necessary. The file is deliberately trusted local Lisp, not a sandbox. Exit with Escape. Next: accept local QA and check the macOS result; then advance to experiment 04 (live assets).
