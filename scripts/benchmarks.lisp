@@ -1,0 +1,6 @@
+(require :asdf)
+(asdf:load-asd (truename "lisp-game-lab.asd"))
+(asdf:load-system "lisp-game-lab/benchmarks")
+(if (uiop:getenv "LAB_BENCH_GRAPHICS")
+    (lab.benchmarks:run-graphics (uiop:getenv "LAB_RAYLIB_BRIDGE"))
+    (lab.benchmarks:run-headless))

@@ -7,7 +7,8 @@ Completed: experiment 04 (live assets).
 Completed: experiment 05 (interactive development).
 Completed: experiment 06 (object playground).
 Completed: experiment 07 (scene DSL).
-Active next: experiment 08 (audio).
+Completed: experiment 08 (automated audio gates; audible QA deferred to final batch).
+Active: experiment 09 (benchmarks).
 
 ## Verified evidence
 
@@ -275,3 +276,11 @@ Next: experiment 08 (audio), then benchmarks and distribution. Hardware accelera
 ## Experiment 08 — initial implementation
 
 Added pure Lisp mixer policy, streamed looping ambience, effect playback, master volume/mute and independent relative bus gains. The demo uses the existing original high tone and a new original synthetic ambient WAV. Space plays effect, M toggles ambience, V mutes, arrow up/down adjusts volume. Native ABI bumped to 5. Automated smoke checks start/stop/restart, mute and gain policy, time advance and at least one observed loop wrap over 300 frames with a null audio device. No Nix dependency changes. Audible playback will be checked once, with no repeated deterministic QA. Next: verify CI, then benchmarks; combine any remaining host QA where practical.
+
+## Experiment 08 — automated acceptance
+
+[CI run 45716159721](https://github.com/sguzman/lisp-game-lab/actions/runs/45716159721), code commit `38b31a2`, passed Linux job 139562625934 and macOS job 139562626332. Both passed mixer policy, all prior headless tests, ABI 5 and compilation. Linux null-device graphical smoke observed four stream wraps, sound start/stop, mute and restart, and clean audio device closure. The previous rotation compiler warnings no longer appeared in the filtered logs. Actual audible sound is not verified; defer that single subjective check to the final batch per user feedback. macOS graphical/audio runtime is unverified.
+
+## Experiment 09 — benchmark harness implemented
+
+Added three isolated cold/warm ASDF load trials, headless code reload/room migration/data asset installation sample distributions, SBCL allocation and live heap counters, and 64-object capped/uncapped graphics benchmarks. CI records the host environment and executes all relevant workloads. ABI 6 adds frame cap control; no Nix changes. See docs/benchmarks.md for metric definitions and limits. No benchmark values claimed before execution. Next: verify CI and persist measured baseline.

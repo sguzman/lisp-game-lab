@@ -34,6 +34,9 @@ The first playground is a small window with a movable square. Arrow keys move it
 | `make rooms-smoke` | Scene migration and rejection smoke |
 | `make audio` | Effects and looping ambience playground |
 | `make audio-smoke` | Automated audio playback and loop checks |
+| `make bench-build` | Three cold/warm ASDF load trials |
+| `make bench-headless` | Reload and migration latency benchmarks |
+| `make bench-graphics` | Capped and uncapped frame timings |
 | `make smoke` | Open a window, render three frames and exit (display required) |
 
 Run these from the repository root inside the Nix shell. Linux is the primary development platform; macOS and Windows are planned targets, not yet validated releases.

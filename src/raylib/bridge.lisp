@@ -7,7 +7,7 @@
   (unless *bridge-loaded-p*
     (sb-alien:load-shared-object (truename pathname))
     (setf *bridge-loaded-p* t))
-  (unless (= 5 (abi-version))
+  (unless (= 6 (abi-version))
     (error "Incompatible Raylib bridge ABI."))
   t)
 
@@ -152,3 +152,6 @@ Restore SBCL's prior trap settings on exit; headless logic is unaffected."
     (when (zerop (sb-sys:sap-int handle))
       (error "Could not load music ~A." path))
     handle))
+
+(sb-alien:define-alien-routine ("lab_target_fps" target-fps) sb-alien:void
+  (fps sb-alien:int))

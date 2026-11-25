@@ -2,7 +2,7 @@
 #include <stdlib.h>
 
 /* Only primitive ABI values cross the language boundary. */
-int lab_abi_version(void) { return 5; }
+int lab_abi_version(void) { return 6; }
 
 int lab_open(int width, int height, const char *title) {
     InitWindow(width, height, title);
@@ -147,3 +147,5 @@ int lab_music_looping(void *handle) { return ((Music *)handle)->looping ? 1 : 0;
 int lab_audio_toggle(void) { return IsKeyPressed(KEY_M) ? 1 : 0; }
 int lab_audio_mute(void) { return IsKeyPressed(KEY_V) ? 1 : 0; }
 int lab_audio_volume_delta(void) { return IsKeyPressed(KEY_UP) - IsKeyPressed(KEY_DOWN); }
+
+void lab_target_fps(int fps) { SetTargetFPS(fps); }

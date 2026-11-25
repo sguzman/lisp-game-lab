@@ -101,3 +101,10 @@
   :serial t
   :components ((:file "experiments/08-audio/package")
                (:file "experiments/08-audio/main")))
+
+(asdf:defsystem "lisp-game-lab/benchmarks"
+  :description "Repeatable development and rendering benchmark workloads"
+  :depends-on ("lisp-game-lab/objects" "lisp-game-lab/reload" "lisp-game-lab/asset-reload")
+  :serial t
+  :components ((:file "experiments/09-benchmarks/package")
+               (:file "experiments/09-benchmarks/main")))

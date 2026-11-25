@@ -12,7 +12,7 @@ SHIM := $(BUILD)/liblab-raylib.so
 SHARED := -shared
 endif
 
-.PHONY: check test style format native abi run smoke render render-smoke live live-smoke assets assets-smoke console console-smoke objects objects-smoke rooms rooms-smoke audio audio-smoke clean
+.PHONY: check test style format native abi run smoke render render-smoke live live-smoke assets assets-smoke console console-smoke objects objects-smoke rooms rooms-smoke audio audio-smoke bench-build bench-headless bench-graphics clean
 
 check: style test abi
 
@@ -81,6 +81,15 @@ audio: native
 
 audio-smoke: native
 	LAB_RAYLIB_BRIDGE="$(abspath $(SHIM))" LAB_SMOKE=1 $(SBCL) --noinform --non-interactive --load scripts/audio.lisp
+
+bench-build:
+	sh scripts/bench-build.sh
+
+bench-headless:
+	$(SBCL) --noinform --non-interactive --load scripts/benchmarks.lisp
+
+bench-graphics: native
+	LAB_RAYLIB_BRIDGE="$(abspath $(SHIM))" LAB_BENCH_GRAPHICS=1 $(SBCL) --noinform --non-interactive --load scripts/benchmarks.lisp
 
 clean:
 	rm -rf $(BUILD)

@@ -11,4 +11,4 @@
            #:sound-volume #:stop-sound #:sound-playing-p
            #:load-music #:unload-music #:play-music #:stop-music #:update-music
            #:music-volume #:music-playing-p #:music-length #:music-time #:music-looping-p
-           #:audio-toggle-p #:audio-mute-p #:audio-volume-delta))
+           #:audio-toggle-p #:audio-mute-p #:audio-volume-delta #:target-fps))
