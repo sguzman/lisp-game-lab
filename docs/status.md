@@ -6,7 +6,7 @@ Completed: experiment 03 (live code).
 Completed: experiment 04 (live assets).
 Completed: experiment 05 (interactive development).
 Completed: experiment 06 (object playground).
-Active next: experiment 07 (scene DSL).
+Active: experiment 07 (scene DSL), local QA gate.
 
 ## Verified evidence
 
@@ -229,3 +229,36 @@ Next: experiment 07, declarative scene descriptions with validation and reload m
 ## Experiment 07 — initial implementation
 
 Added versioned room S-expression DSL, validation of settled boards, atomic staged migration with stable IDs and preserved placement/rotation/support, reusable object playground input/drawing, three fixtures and a four-frame graphical smoke. Headless tests cover malformed/cyclic/overlapping definitions, removal of occupied supports, incompatible resized supports, drag rejection and identity preservation. No native ABI or Nix dependency changes. Existing IDs retain runtime placement rather than accepting changed authored coordinates; this is an explicit migration policy. Next: verify CI and then batch local QA. No human action yet.
+
+## Experiment 07 — CI verified; local scene QA ready
+
+[CI run 45714753492](https://github.com/sguzman/lisp-game-lab/actions/runs/45714753492), code commit `6aed627`, passed on Linux (job 139557834052) and macOS (job 139557834481). Both passed the headless room validation, identity migration and atomic rejection tests, all preceding unit tests, ABI 4 and compilation. Linux passed all graphical smoke tests; room smoke accepted revisions 1 and 2, rejected the valid-as-authored conflict fixture at unchanged revision 2 (unrelated items 3 and 6 overlap), then accepted revision 3. Object identity and retained coordinates were asserted. macOS graphical execution remains untested.
+
+Local QA, pull required in the recovered checkout:
+
+```fish
+cd ~/Code/Games/lisp-game-lab/lisp-game-lab-clean
+and git pull --ff-only origin main
+and nix develop .#ci -c env XDG_SESSION_TYPE=x11 make rooms
+```
+
+The first launch seeds build/room-live.room from initial.room. The live file is ignored and disposable; subsequent launches retain it. Move gold object 3 into the lower-right empty space, approximately center (680,350) in the 800x480 logical window, and release. Keep the window open. In a second terminal:
+
+```fish
+set lab ~/Code/Games/lisp-game-lab/lisp-game-lab-clean
+cp "$lab/assets/07-rooms/changed.room" "$lab/build/room-live.room"
+```
+
+Object 3 becomes purple without changing its current position, object 4 disappears, and new gold object 5 appears at lower left. Then:
+
+```fish
+cp "$lab/assets/07-rooms/conflict.room" "$lab/build/room-live.room"
+```
+
+If object 3 overlaps the proposed item 6 footprint (650..746,330..394), the reload is rejected and nothing changes. Otherwise this valid definition may be accepted; that is not a failure of validation. To ensure rejection in that case, restore changed.room, move item 3 to the indicated region, and repeat. Finally:
+
+```fish
+cp "$lab/assets/07-rooms/initial.room" "$lab/build/room-live.room"
+```
+
+Object 3 returns to gold at its moved position, item 5 disappears and item 4 returns. Escape closes the game. Text confirmation sufficient, no uploads needed. No Nix dependency changes. Next: accept local QA, then experiment 08 (audio).
