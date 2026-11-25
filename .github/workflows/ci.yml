@@ -28,9 +28,11 @@ jobs:
       - run: nix develop -c make check
       - name: Compile playground
         run: nix develop -c sbcl --noinform --non-interactive --eval '(require :asdf)' --eval '(asdf:load-asd (truename "lisp-game-lab.asd"))' --eval '(asdf:load-system "lisp-game-lab/playground")'
+      - name: Compile rendering experiment
+        run: nix develop -c sbcl --noinform --non-interactive --eval '(require :asdf)' --eval '(asdf:load-asd (truename "lisp-game-lab.asd"))' --eval '(asdf:load-system "lisp-game-lab/rendering")'
       - name: Virtual display smoke
         if: runner.os == 'Linux'
         run: |
           sudo apt-get update
           sudo apt-get install -y xvfb xauth
-          xvfb-run -a -s '-screen 0 1280x720x24 +extension GLX' nix develop .#ci -c make smoke
+          xvfb-run -a -s '-screen 0 1280x720x24 +extension GLX' nix develop .#ci -c make smoke render-smoke

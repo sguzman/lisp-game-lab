@@ -4,7 +4,8 @@
   :license "MIT"
   :serial t
   :components ((:file "src/core/package")
-               (:file "src/core/world"))
+               (:file "src/core/world")
+               (:file "src/core/scene"))
   :in-order-to ((asdf:test-op (asdf:test-op "lisp-game-lab/tests"))))
 
 (asdf:defsystem "lisp-game-lab/raylib"
@@ -24,7 +25,15 @@
   :depends-on ("lisp-game-lab")
   :serial t
   :components ((:file "tests/package")
+               (:file "tests/scene")
                (:file "tests/world"))
   :perform (asdf:test-op (operation component)
              (declare (ignore operation component))
              (uiop:symbol-call :lab.tests :run-tests)))
+
+(asdf:defsystem "lisp-game-lab/rendering"
+  :description "Layered sprite and camera experiment"
+  :depends-on ("lisp-game-lab" "lisp-game-lab/raylib")
+  :serial t
+  :components ((:file "experiments/02-rendering/package")
+               (:file "experiments/02-rendering/main")))

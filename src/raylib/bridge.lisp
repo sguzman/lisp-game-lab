@@ -7,7 +7,7 @@
   (unless *bridge-loaded-p*
     (sb-alien:load-shared-object (truename pathname))
     (setf *bridge-loaded-p* t))
-  (unless (= 1 (abi-version))
+  (unless (= 2 (abi-version))
     (error "Incompatible Raylib bridge ABI."))
   t)
 
@@ -36,3 +36,20 @@
 
 (defun should-close-p ()
   (not (zerop (%should-close))))
+
+(sb-alien:define-alien-routine ("lab_load_texture" %load-texture)
+    sb-alien:system-area-pointer
+  (path sb-alien:c-string))
+
+(sb-alien:define-alien-routine ("lab_unload_texture" unload-texture) sb-alien:void
+  (handle sb-alien:system-area-pointer))
+
+(sb-alien:define-alien-routine ("lab_draw_texture" draw-texture) sb-alien:void
+  (handle sb-alien:system-area-pointer)
+  (x sb-alien:int) (y sb-alien:int) (scale sb-alien:int))
+
+(defun load-texture (path)
+  (let ((handle (%load-texture (namestring (truename path)))))
+    (when (zerop (sb-sys:sap-int handle))
+      (error "Could not load texture ~A." path))
+    handle))

@@ -1,7 +1,8 @@
 #include <raylib.h>
+#include <stdlib.h>
 
 /* Only primitive ABI values cross the language boundary. */
-int lab_abi_version(void) { return 1; }
+int lab_abi_version(void) { return 2; }
 
 int lab_open(int width, int height, const char *title) {
     InitWindow(width, height, title);
@@ -29,4 +30,31 @@ void lab_draw_item(int x, int y, int size) {
 
 void lab_draw_label(const char *label) {
     DrawText(label, 20, 20, 20, RAYWHITE);
+}
+
+/* GPU resources are explicitly owned by the caller, on the window thread. */
+void *lab_load_texture(const char *path) {
+    Texture2D texture = LoadTexture(path);
+    if (!IsTextureValid(texture)) return NULL;
+    Texture2D *handle = malloc(sizeof(*handle));
+    if (!handle) {
+        UnloadTexture(texture);
+        return NULL;
+    }
+    *handle = texture;
+    SetTextureFilter(texture, TEXTURE_FILTER_POINT);
+    return handle;
+}
+
+void lab_unload_texture(void *handle) {
+    if (!handle) return;
+    Texture2D *texture = handle;
+    UnloadTexture(*texture);
+    free(texture);
+}
+
+void lab_draw_texture(void *handle, int x, int y, int scale) {
+    Texture2D *texture = handle;
+    DrawTextureEx(*texture, (Vector2){(float)x, (float)y}, 0.0f,
+                  (float)scale, WHITE);
 }

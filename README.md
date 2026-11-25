@@ -20,6 +20,8 @@ The first playground is a small window with a movable square. Arrow keys move it
 | `make format` | Emacs Lisp-mode indentation and whitespace cleanup |
 | `make check` | Style, headless tests, native bridge build and ABI probe |
 | `make run` | Interactive playground |
+| `make render` | Layered texture and camera playground |
+| `make render-smoke` | Bounded texture rendering smoke |
 | `make smoke` | Open a window, render three frames and exit (display required) |
 
 Run these from the repository root inside the Nix shell. Linux is the primary development platform; macOS and Windows are planned targets, not yet validated releases.

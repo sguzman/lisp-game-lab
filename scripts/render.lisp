@@ -1,0 +1,5 @@
+(require :asdf)
+(asdf:load-asd (truename "lisp-game-lab.asd"))
+(asdf:load-system "lisp-game-lab/rendering")
+(lab.rendering:run (uiop:getenv "LAB_RAYLIB_BRIDGE")
+                   :frame-limit (when (uiop:getenv "LAB_SMOKE") 3))

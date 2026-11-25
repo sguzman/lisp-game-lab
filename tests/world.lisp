@@ -20,4 +20,5 @@
     (assert (= (- lab.core:+height+ lab.core:+item-size+)
                (lab.core:world-y world))))
   (format t "~&World tests passed.~%")
+  (test-scene)
   t)

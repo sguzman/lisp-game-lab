@@ -42,3 +42,9 @@ Windows distribution and macOS graphical execution remain unverified. See [roadm
 ## Nix release policy
 
 Per user direction, flake.nix now names nixos-26.05 and flake.lock retains the identical previously verified locked revision and hash. Only the original input reference metadata changed. [CI run 45681665724](https://github.com/sguzman/lisp-game-lab/actions/runs/45681665724) passed every Linux gate including lock validation and graphical smoke; the macOS job was cancelled, with the earlier macOS build/ABI pass still the available evidence. Local software-rendering startup is user-confirmed.
+
+## Experiment 02 — first implementation
+
+Added a headless sprite/camera model, stable layer/depth ordering, a separate rendering ASDF system, four original disposable PNG textures, explicit texture cache ownership with unwind cleanup, and a bounded smoke checking four unique texture handles and three completed frames. The existing foundation demo remains runnable. The ABI version is now 2.
+
+No flake or lockfile changes. The upstream binding comparison confirmed fosskers has texture and camera wrappers, but its separate vendored Raylib build and shim require a separate reproducible trial. Keep the small baseline adapter for this scene; do not claim upstream runtime validation. Next: inspect new CI, complete the upstream trial, then batch local visual QA. For the next QA, explicitly request git pull --ff-only and use the known working software shell.

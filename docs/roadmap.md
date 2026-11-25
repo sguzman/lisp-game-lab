@@ -15,4 +15,4 @@ These are small, independently demonstrable experiments, not a production engine
 | 09 | Benchmarks | Repeatable timings for builds, reloads, FPS and memory; record environment |
 | 10 | Distribution | Native Linux/Windows/macOS build and run evidence; document portability limitations |
 
-Proceed in order unless a dependency forces a documented change. Experiment 01 is the active milestone. Compare existing Common Lisp Raylib bindings before extending the primitive bridge. Keep production game assets out of this public repository.
+Proceed in order unless a dependency forces a documented change. See [current state](status.md) for the active milestone. Compare existing Common Lisp Raylib bindings before extending the primitive bridge. Keep production game assets out of this public repository.
