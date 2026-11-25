@@ -16,18 +16,19 @@
     (lab.raylib:end-frame)))
 
 (defun run (bridge &key frame-limit)
-  (let ((world (lab.core:make-world)))
-    (lab.raylib:load-bridge bridge)
-    (lab.raylib:open-window lab.core:+width+ lab.core:+height+
-                            "Lisp Game Lab")
-    (unwind-protect
-         (let ((frames 0))
-           (loop until (or (and frame-limit (>= frames frame-limit))
-                           (lab.raylib:should-close-p))
-                 do (update-world world)
-                    (render-world world)
-                    (incf frames))
-           (when frame-limit
-             (assert (= frames frame-limit))
-             (format t "~&Rendered ~D frames successfully.~%" frames)))
-      (lab.raylib:close-window))))
+  (lab.raylib:with-graphics-float-environment
+    (let ((world (lab.core:make-world)))
+      (lab.raylib:load-bridge bridge)
+      (lab.raylib:open-window lab.core:+width+ lab.core:+height+
+                              "Lisp Game Lab")
+      (unwind-protect
+           (let ((frames 0))
+             (loop until (or (and frame-limit (>= frames frame-limit))
+                             (lab.raylib:should-close-p))
+                   do (update-world world)
+                      (render-world world)
+                      (incf frames))
+             (when frame-limit
+               (assert (= frames frame-limit))
+               (format t "~&Rendered ~D frames successfully.~%" frames)))
+        (lab.raylib:close-window)))))

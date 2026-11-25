@@ -53,3 +53,11 @@
     (when (zerop (sb-sys:sap-int handle))
       (error "Could not load texture ~A." path))
     handle))
+
+(defmacro with-graphics-float-environment (&body body)
+  "Run the native graphics session with C-compatible floating-point traps.
+Start before window creation so driver threads can inherit this environment.
+Restore SBCL's prior trap settings on exit; headless logic is unaffected."
+  `(sb-int:with-float-traps-masked (:invalid :divide-by-zero :overflow
+                                   :underflow :inexact)
+     ,@body))

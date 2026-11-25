@@ -15,7 +15,7 @@ Active next: experiment 02 (rendering).
 
 Linux job 139438669650 logged "World tests passed.", "Raylib bridge ABI probe passed.", Mesa llvmpipe (LLVM 21.1.8) and "Rendered 3 frames successfully." The original GLX failure is resolved in hosted Linux CI. The Nix lockfile is tracked and validated against HEAD. Prior macOS job 139435973587 passed its build and ABI gates; the newer macOS jobs were cancelled, so the earlier pass remains the available evidence.
 
-[Raylib binding assessment](raylib-bindings.md) records the provisional baseline decision. No comparative binding runtime test has been performed yet.
+[Raylib binding assessment](raylib-bindings.md) records the provisional baseline decision. A later Linux compatibility trial passed; see the latest entry below.
 
 ## Local visual/input QA
 
@@ -51,6 +51,14 @@ No flake or lockfile changes. The upstream binding comparison confirmed fosskers
 
 ## Experiment 02 — CI evidence and binding trial
 
-[CI run 45690527757](https://github.com/sguzman/lisp-game-lab/actions/runs/45690527757), code commit `fd2f9c9`: Linux job 139474471448 passed lock validation, style, unit tests, ABI probe, both ASDF compilation steps and both graphical smoke tests. Logs show four 32x32 RGBA PNGs loaded, "Rendering smoke: 3 frames, 4 unique textures." and all four texture IDs unloaded from VRAM. macOS was still running when inspected. Actual visual appearance and camera input await human QA; ordering/camera logic is covered by headless tests.
+[CI run 45690527757](https://github.com/sguzman/lisp-game-lab/actions/runs/45690527757), code commit `fd2f9c9`: Linux job 139474471448 passed lock validation, style, unit tests, ABI probe, both ASDF compilation steps and both graphical smoke tests. Logs show four 32x32 RGBA PNGs loaded, "Rendering smoke: 3 frames, 4 unique textures." and all four texture IDs unloaded from VRAM. macOS was subsequently cancelled. Actual visual appearance and camera input await human QA; ordering/camera logic is covered by headless tests.
 
 Added an isolated Linux CI binding trial with pinned fosskers/raylib and trivial-garbage source checkouts. It builds the upstream shim against the existing Nix Raylib header/library rather than compiling the vendored copy, and checks texture dimensions/validity, camera transform, input query, bounded rendering and explicit unload. No default dependencies or Nix pins changed. This is a compatibility experiment, not yet a verified alternative adapter. Next: inspect binding trial CI and any outstanding macOS results; then request a single rendering QA pass (pull required, existing software shell).
+
+## Experiment 02 — compatibility result and intermittent regression
+
+The [binding trial](https://github.com/sguzman/lisp-game-lab/actions/runs/45690735898), job 139475189291, passed on Linux. Keep the baseline adapter for now: migration has unresolved scaling/API and macOS loader work. The successful upstream trial is narrow, not a portability or performance claim.
+
+The repeat regression [run 45690735940](https://github.com/sguzman/lisp-game-lab/actions/runs/45690735940), Linux job 139475365762, passed lock validation, headless tests, ABI, both compilations, and the foundation smoke, but the rendering process exited 136 (SIGFPE) after successfully loading all four textures. This contradicts a claim of consistently passing smoke. macOS was still in progress at inspection.
+
+Mitigation: SBCL trap masking scoped to the full native window session (before creating driver threads), restored on exit. Headless tests retain normal arithmetic behavior. This is a hypothesis, not a proven root cause. Separate the foundation virtual display from rendering and require five consecutive rendering processes to succeed in the latter. No input/lock changes. Next: verify the mitigation in CI, then issue explicit pull and visual QA commands. If it fails, collect a native stack trace rather than hiding the failure with retries.

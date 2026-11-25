@@ -53,32 +53,33 @@
     (lab.raylib:end-frame)))
 
 (defun run (bridge &key frame-limit)
-  (let ((sprites (make-room))
-        (camera (lab.scene:make-camera))
-        (cache (make-hash-table :test #'equal))
-        (root (asdf:system-relative-pathname
-               "lisp-game-lab" "assets/02-rendering/")))
-    (lab.raylib:load-bridge bridge)
-    (lab.raylib:open-window lab.core:+width+ lab.core:+height+
-                            "Lisp Game Lab | Rendering")
-    (unwind-protect
-         (progn
-           (acquire-textures sprites root cache)
-           (assert (= 4 (hash-table-count cache)))
-           (let ((frames 0))
-             (loop until (or (and frame-limit (>= frames frame-limit))
-                             (lab.raylib:should-close-p))
-                   do (lab.scene:pan-camera
-                       camera (* 6 (lab.raylib:input-x))
-                       (* 6 (lab.raylib:input-y))
-                       +world-width+ +world-height+
-                       lab.core:+width+ lab.core:+height+)
-                      (render-room sprites camera cache)
-                      (incf frames))
-             (when frame-limit
-               (assert (= frames frame-limit))
-               (format t "~&Rendering smoke: ~D frames, ~D unique textures.~%"
-                       frames (hash-table-count cache)))))
+  (lab.raylib:with-graphics-float-environment
+    (let ((sprites (make-room))
+          (camera (lab.scene:make-camera))
+          (cache (make-hash-table :test #'equal))
+          (root (asdf:system-relative-pathname
+                 "lisp-game-lab" "assets/02-rendering/")))
+      (lab.raylib:load-bridge bridge)
+      (lab.raylib:open-window lab.core:+width+ lab.core:+height+
+                              "Lisp Game Lab | Rendering")
       (unwind-protect
-           (release-textures cache)
-        (lab.raylib:close-window)))))
+           (progn
+             (acquire-textures sprites root cache)
+             (assert (= 4 (hash-table-count cache)))
+             (let ((frames 0))
+               (loop until (or (and frame-limit (>= frames frame-limit))
+                               (lab.raylib:should-close-p))
+                     do (lab.scene:pan-camera
+                         camera (* 6 (lab.raylib:input-x))
+                         (* 6 (lab.raylib:input-y))
+                         +world-width+ +world-height+
+                         lab.core:+width+ lab.core:+height+)
+                        (render-room sprites camera cache)
+                        (incf frames))
+               (when frame-limit
+                 (assert (= frames frame-limit))
+                 (format t "~&Rendering smoke: ~D frames, ~D unique textures.~%"
+                         frames (hash-table-count cache)))))
+        (unwind-protect
+             (release-textures cache)
+          (lab.raylib:close-window))))))

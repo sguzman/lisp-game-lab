@@ -44,3 +44,7 @@ SBCL's SB-ALIEN API plus a small C shim isolates ABI issues (Raylib passes struc
 Headless domain tests exercise rules; adapter probes test linking; bounded window smoke exercises initialization, rendering and cleanup. Visual QA verifies actual pixels and interaction. Future tests should cover reload failure recovery, resource lifetime, migration, and deterministic save/load. Cross-platform compilation is distinct from native execution and portable release packaging.
 
 See [Raylib binding assessment](raylib-bindings.md) for the pinned upstream source comparison and provisional decision.
+
+### Native floating-point environment
+
+SBCL enables floating-point traps that C graphics drivers may not expect. The graphical composition roots enter a scoped trap-masked environment before opening a window and restore the caller's settings on exit. Headless domain execution is unchanged. This is a mitigation for the observed intermittent native SIGFPE; the specific faulting instruction is not established.

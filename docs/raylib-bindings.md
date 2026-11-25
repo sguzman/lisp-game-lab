@@ -1,6 +1,6 @@
 # Raylib binding assessment
 
-Source inspection, 2026-11-25. No comparative build or performance measurement yet.
+Source inspection and Linux compatibility trial, 2026-11-25. No comparative performance measurement yet.
 
 | Approach | Strengths | Costs |
 | --- | --- | --- |
@@ -16,4 +16,8 @@ Keep the current tiny bridge as the controlled baseline until foundation verific
 
 ## Narrow trial
 
-The pinned fosskers source vendors Raylib 5.5. Its SBCL loader expects two libraries in a working-directory-relative lib/ directory and has Linux/Windows branches but no macOS loader branch. The current Nix Raylib reports 5.6-dev at runtime. The isolated [trial workflow](../.github/workflows/binding-trial.yml) tests whether the upstream shim can link against our exact shared library and whether its Lisp API can load/draw/unload a PNG and apply a camera transformation. The only additional Lisp dependency is pinned trivial-garbage (f0663f7b0c900ed78ac19f6db306e7c6cac999fd). The source checkout and build live under ignored build/; no changes to the development shell or lockfile. A passing trial would establish narrow Linux compatibility, not macOS or Windows portability or full API coverage. The baseline adapter remains the default pending evidence.
+The pinned fosskers source vendors Raylib 5.5. Its SBCL loader expects two libraries in a working-directory-relative lib/ directory and has Linux/Windows branches but no macOS loader branch. The current Nix Raylib reports 5.6-dev at runtime. The isolated [trial workflow](../.github/workflows/binding-trial.yml) tests whether the upstream shim can link against our exact shared library and whether its Lisp API can load/draw/unload a PNG and apply a camera transformation. The only additional Lisp dependency is pinned trivial-garbage (f0663f7b0c900ed78ac19f6db306e7c6cac999fd). The source checkout and build live under ignored build/; no changes to the development shell or lockfile. [Trial run 45690735898](https://github.com/sguzman/lisp-game-lab/actions/runs/45690735898), job 139475189291, succeeded: texture validity/dimensions, camera transform, input query, three frames and unload. This establishes narrow Linux compatibility with the current Nix Raylib, not macOS or Windows portability or full API coverage.
+
+## Decision after trial
+
+Keep the small baseline adapter for the present experiments. The upstream binding is a viable Linux candidate, but the missing macOS loader and lack of an exported scaled-texture draw API in the inspected source mean migration would still need platform and rendering work. Keep its trial isolated and revisit adoption when the object/audio experiments require a broader API. Do not duplicate its entire API or change dependencies merely to replace the now-working baseline. No performance ranking is justified by this smoke test.

@@ -35,4 +35,5 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y xvfb xauth
-          xvfb-run -a -s '-screen 0 1280x720x24 +extension GLX' nix develop .#ci -c make smoke render-smoke
+          xvfb-run -a -s '-screen 0 1280x720x24 +extension GLX' nix develop .#ci -c make smoke
+          xvfb-run -a -s '-screen 0 1280x720x24 +extension GLX' nix develop .#ci -c sh -eu -c 'for i in 1 2 3 4 5; do echo "Rendering trial $i/5"; make render-smoke; done'
