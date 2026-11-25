@@ -5,7 +5,7 @@ Completed: experiment 02 (rendering).
 Completed: experiment 03 (live code).
 Completed: experiment 04 (live assets).
 Completed: experiment 05 (interactive development).
-Active next: experiment 06 (object playground).
+Active: experiment 06 (object playground), local QA gate.
 
 ## Verified evidence
 
@@ -204,3 +204,17 @@ Added deterministic headless board and item model with stable identity, mouse hi
 ## Experiment 06 — selection contract correction
 
 [CI run 45709269740](https://github.com/sguzman/lisp-game-lab/actions/runs/45709269740), Linux job 139539175087, passed lock validation and the previous headless tests, then failed the new object test because PICK-ITEM returned :EMPTY (the SETF value) rather than NIL. The same defect existed in the occupied-support branch. Both branches now record their status and explicitly return NIL. Added assertions for empty pickup, occupied pickup and attempting a second pickup during a drag. The graphical smoke was skipped on the failing run; the correction remains unverified until new CI. No dependency changes or local QA required yet.
+
+## Experiment 06 — CI verified; local mouse QA ready
+
+[CI run 45709386243](https://github.com/sguzman/lisp-game-lab/actions/runs/45709386243), code commit `2475a60`, succeeded on Linux (job 139539723430) and macOS (job 139539723863). Both passed the corrected pickup contract, deterministic object placement, rotation, stacking and rollback tests, prior headless tests, ABI 4 and compilation. Linux passed the full graphical regression suite including "Object smoke: drag, rotate, stack, reject and detach passed." The object smoke calls the domain operations directly rather than injecting real mouse events; actual input remains the local gate. macOS graphical execution and hardware-accelerated Linux rendering remain unverified.
+
+Pull required in the recovered checkout:
+
+```fish
+cd ~/Code/Games/lisp-game-lab/lisp-game-lab-clean
+and git pull --ff-only origin main
+and nix develop .#ci -c env XDG_SESSION_TYPE=x11 make objects
+```
+
+In the window: drag the small gold item 3 to an empty region and release (PLACED); hold it again and press R while dragging to rotate its rectangular footprint; drop it wholly inside brown item 1 (STACKED). Try dragging the exposed part of item 1 while item 3 rests on it (OCCUPIED, no movement). Pick item 3 up, drag it so that only part overlaps purple item 4, and release (REJECTED; exact previous stack position and orientation restored). Pick item 3 up again and drop it in an empty region (PLACED; detached); test C during a drag to cancel and restore the original placement. Escape closes the window. Intentional rejected placements are expected, not crashes. No second terminal or screenshot required; text confirmation suffices. No new Nix dependencies. Next: accept local mouse QA, then experiment 07.
