@@ -40,6 +40,8 @@ jobs:
         run: nix develop -c sbcl --noinform --non-interactive --eval '(require :asdf)' --eval '(asdf:load-asd (truename "lisp-game-lab.asd"))' --eval '(asdf:load-system "lisp-game-lab/objects")'
       - name: Compile declarative room experiment
         run: nix develop -c sbcl --noinform --non-interactive --eval '(require :asdf)' --eval '(asdf:load-asd (truename "lisp-game-lab.asd"))' --eval '(asdf:load-system "lisp-game-lab/rooms")'
+      - name: Compile audio experiment
+        run: nix develop -c sbcl --noinform --non-interactive --eval '(require :asdf)' --eval '(asdf:load-asd (truename "lisp-game-lab.asd"))' --eval '(asdf:load-system "lisp-game-lab/audio")'
       - name: Virtual display smoke
         if: runner.os == 'Linux'
         run: |
@@ -52,3 +54,4 @@ jobs:
           xvfb-run -a -s '-screen 0 1280x720x24 +extension GLX' nix develop .#ci -c make console-smoke
           xvfb-run -a -s '-screen 0 1280x720x24 +extension GLX' nix develop .#ci -c make objects-smoke
           xvfb-run -a -s '-screen 0 1280x720x24 +extension GLX' nix develop .#ci -c make rooms-smoke
+          xvfb-run -a -s '-screen 0 1280x720x24 +extension GLX' nix develop .#ci -c env ALSA_CONFIG_PATH="$PWD/scripts/alsa-null.conf" make audio-smoke

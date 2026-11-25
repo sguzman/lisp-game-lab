@@ -271,3 +271,7 @@ User reported the room experiment working. Terminal evidence records accepted re
 User feedback: repetitive multi-terminal engineering QA is burdensome. Prefer automated assertions and CI for behavior that can be tested there; reserve short, batched manual checks for actual subjective gameplay feel, audible output or otherwise inaccessible host-specific behavior. Do not require repeated screenshots or engineering chores to establish already automated behavior.
 
 Next: experiment 08 (audio), then benchmarks and distribution. Hardware acceleration and macOS graphical execution remain unverified. No pull required now.
+
+## Experiment 08 — initial implementation
+
+Added pure Lisp mixer policy, streamed looping ambience, effect playback, master volume/mute and independent relative bus gains. The demo uses the existing original high tone and a new original synthetic ambient WAV. Space plays effect, M toggles ambience, V mutes, arrow up/down adjusts volume. Native ABI bumped to 5. Automated smoke checks start/stop/restart, mute and gain policy, time advance and at least one observed loop wrap over 300 frames with a null audio device. No Nix dependency changes. Audible playback will be checked once, with no repeated deterministic QA. Next: verify CI, then benchmarks; combine any remaining host QA where practical.

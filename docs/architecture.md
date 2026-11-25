@@ -68,3 +68,7 @@ The headless board owns stable item instances, with integer footprints, quarter-
 ### Experiment 07: declarative room migration
 
 The versioned room DSL is a single data-only S-expression, with bounded input and reader evaluation disabled. The object domain validates authored definitions and a separate staged board before publishing changes. Existing IDs retain object identity and gameplay position/rotation/support, new IDs use authored defaults, removed IDs disappear. Invalid migrated placement rejects the whole change instead of silently moving objects. Publication copies only validated definition properties into existing instances on the owner thread. File polling reuses the asset replacement protocol and is deferred during active drags. See [room format](room-format.md) for the precise contract and limitations.
+
+### Experiment 08: audio mixer and stream
+
+The headless mixer holds integer master volume, mute and ambience state; gain computation uses independent relative effect and ambience levels. The Raylib adapter owns opaque Sound and Music handles; streamed ambience is updated on the window thread each frame and configured to loop. Muting changes gain, not playback state; toggling ambience stops or restarts the stream. Resources are stopped and unloaded before closing the audio device, even on partial acquisition. The two buses are deliberately small, not a polyphonic voice allocator or production mixer. Null-device CI tests transport state and loop progression, not actual sound pressure or perceived quality.

@@ -2,7 +2,7 @@
 #include <stdlib.h>
 
 /* Only primitive ABI values cross the language boundary. */
-int lab_abi_version(void) { return 4; }
+int lab_abi_version(void) { return 5; }
 
 int lab_open(int width, int height, const char *title) {
     InitWindow(width, height, title);
@@ -112,3 +112,38 @@ void lab_draw_object(int x, int y, int w, int h, int color, int turn, int held) 
 void lab_draw_object_label(const char *label, int x, int y) {
     DrawText(label, x, y, 16, RAYWHITE);
 }
+
+void lab_sound_volume(void *handle, float volume) {
+    SetSoundVolume(*(Sound *)handle, volume);
+}
+void lab_stop_sound(void *handle) { StopSound(*(Sound *)handle); }
+int lab_sound_playing(void *handle) { return IsSoundPlaying(*(Sound *)handle) ? 1 : 0; }
+
+void *lab_load_music(const char *path) {
+    Music music = LoadMusicStream(path);
+    if (!IsMusicValid(music)) return NULL;
+    Music *handle = malloc(sizeof(*handle));
+    if (!handle) {
+        UnloadMusicStream(music);
+        return NULL;
+    }
+    music.looping = true;
+    *handle = music;
+    return handle;
+}
+void lab_unload_music(void *handle) {
+    if (!handle) return;
+    UnloadMusicStream(*(Music *)handle);
+    free(handle);
+}
+void lab_play_music(void *handle) { PlayMusicStream(*(Music *)handle); }
+void lab_stop_music(void *handle) { StopMusicStream(*(Music *)handle); }
+void lab_update_music(void *handle) { UpdateMusicStream(*(Music *)handle); }
+void lab_music_volume(void *handle, float volume) { SetMusicVolume(*(Music *)handle, volume); }
+int lab_music_playing(void *handle) { return IsMusicStreamPlaying(*(Music *)handle) ? 1 : 0; }
+float lab_music_length(void *handle) { return GetMusicTimeLength(*(Music *)handle); }
+float lab_music_time(void *handle) { return GetMusicTimePlayed(*(Music *)handle); }
+int lab_music_looping(void *handle) { return ((Music *)handle)->looping ? 1 : 0; }
+int lab_audio_toggle(void) { return IsKeyPressed(KEY_M) ? 1 : 0; }
+int lab_audio_mute(void) { return IsKeyPressed(KEY_V) ? 1 : 0; }
+int lab_audio_volume_delta(void) { return IsKeyPressed(KEY_UP) - IsKeyPressed(KEY_DOWN); }

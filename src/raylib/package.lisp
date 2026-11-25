@@ -7,4 +7,8 @@
            #:open-audio #:close-audio #:sound-trigger-p
            #:load-sound #:unload-sound #:play-sound
            #:mouse-x #:mouse-y #:mouse-pressed-p #:mouse-released-p
-           #:rotate-pressed-p #:cancel-pressed-p #:draw-object #:draw-object-label))
+           #:rotate-pressed-p #:cancel-pressed-p #:draw-object #:draw-object-label
+           #:sound-volume #:stop-sound #:sound-playing-p
+           #:load-music #:unload-music #:play-music #:stop-music #:update-music
+           #:music-volume #:music-playing-p #:music-length #:music-time #:music-looping-p
+           #:audio-toggle-p #:audio-mute-p #:audio-volume-delta))

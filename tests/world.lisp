@@ -26,4 +26,5 @@
   (test-console)
   (test-objects)
   (test-room)
+  (test-audio)
   t)

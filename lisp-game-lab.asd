@@ -7,7 +7,8 @@
                (:file "src/core/world")
                (:file "src/core/scene")
                (:file "src/core/objects")
-               (:file "src/core/room"))
+               (:file "src/core/room")
+               (:file "src/core/audio"))
   :in-order-to ((asdf:test-op (asdf:test-op "lisp-game-lab/tests"))))
 
 (asdf:defsystem "lisp-game-lab/raylib"
@@ -33,6 +34,7 @@
                (:file "tests/console")
                (:file "tests/objects")
                (:file "tests/room")
+               (:file "tests/audio")
                (:file "tests/world"))
   :perform (asdf:test-op (operation component)
              (declare (ignore operation component))
@@ -92,3 +94,10 @@
   :serial t
   :components ((:file "experiments/07-rooms/package")
                (:file "experiments/07-rooms/main")))
+
+(asdf:defsystem "lisp-game-lab/audio"
+  :description "Effects and streaming ambience experiment"
+  :depends-on ("lisp-game-lab" "lisp-game-lab/raylib")
+  :serial t
+  :components ((:file "experiments/08-audio/package")
+               (:file "experiments/08-audio/main")))

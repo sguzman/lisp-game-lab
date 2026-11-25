@@ -7,7 +7,7 @@
   (unless *bridge-loaded-p*
     (sb-alien:load-shared-object (truename pathname))
     (setf *bridge-loaded-p* t))
-  (unless (= 4 (abi-version))
+  (unless (= 5 (abi-version))
     (error "Incompatible Raylib bridge ABI."))
   t)
 
@@ -109,3 +109,46 @@ Restore SBCL's prior trap settings on exit; headless logic is unaffected."
 (sb-alien:define-alien-routine ("lab_draw_object_label" draw-object-label)
     sb-alien:void
   (label sb-alien:c-string) (x sb-alien:int) (y sb-alien:int))
+
+(sb-alien:define-alien-routine ("lab_sound_volume" sound-volume) sb-alien:void
+  (handle sb-alien:system-area-pointer) (volume sb-alien:float))
+(sb-alien:define-alien-routine ("lab_stop_sound" stop-sound) sb-alien:void
+  (handle sb-alien:system-area-pointer))
+(sb-alien:define-alien-routine ("lab_sound_playing" %sound-playing) sb-alien:int
+  (handle sb-alien:system-area-pointer))
+
+(sb-alien:define-alien-routine ("lab_load_music" %load-music) sb-alien:system-area-pointer
+  (path sb-alien:c-string))
+(sb-alien:define-alien-routine ("lab_unload_music" unload-music) sb-alien:void
+  (handle sb-alien:system-area-pointer))
+(sb-alien:define-alien-routine ("lab_play_music" play-music) sb-alien:void
+  (handle sb-alien:system-area-pointer))
+(sb-alien:define-alien-routine ("lab_stop_music" stop-music) sb-alien:void
+  (handle sb-alien:system-area-pointer))
+(sb-alien:define-alien-routine ("lab_update_music" update-music) sb-alien:void
+  (handle sb-alien:system-area-pointer))
+(sb-alien:define-alien-routine ("lab_music_volume" music-volume) sb-alien:void
+  (handle sb-alien:system-area-pointer) (volume sb-alien:float))
+(sb-alien:define-alien-routine ("lab_music_playing" %music-playing) sb-alien:int
+  (handle sb-alien:system-area-pointer))
+(sb-alien:define-alien-routine ("lab_music_length" music-length) sb-alien:float
+  (handle sb-alien:system-area-pointer))
+(sb-alien:define-alien-routine ("lab_music_time" music-time) sb-alien:float
+  (handle sb-alien:system-area-pointer))
+(sb-alien:define-alien-routine ("lab_music_looping" %music-looping) sb-alien:int
+  (handle sb-alien:system-area-pointer))
+(sb-alien:define-alien-routine ("lab_audio_toggle" %audio-toggle) sb-alien:int)
+(sb-alien:define-alien-routine ("lab_audio_mute" %audio-mute) sb-alien:int)
+(sb-alien:define-alien-routine ("lab_audio_volume_delta" audio-volume-delta) sb-alien:int)
+
+(defun sound-playing-p (handle) (not (zerop (%sound-playing handle))))
+(defun music-playing-p (handle) (not (zerop (%music-playing handle))))
+(defun music-looping-p (handle) (not (zerop (%music-looping handle))))
+(defun audio-toggle-p () (not (zerop (%audio-toggle))))
+(defun audio-mute-p () (not (zerop (%audio-mute))))
+
+(defun load-music (path)
+  (let ((handle (%load-music (namestring (truename path)))))
+    (when (zerop (sb-sys:sap-int handle))
+      (error "Could not load music ~A." path))
+    handle))
