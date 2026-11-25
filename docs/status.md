@@ -1,6 +1,7 @@
 # Current state
 
-Active: experiment 01 (foundation), local QA gate.
+Completed: experiment 01 (foundation, with software-rendering development path).
+Active next: experiment 02 (rendering).
 
 ## Verified evidence
 
@@ -8,11 +9,11 @@ Active: experiment 01 (foundation), local QA gate.
 
 | Gate | Linux | macOS |
 | --- | --- | --- |
-| Committed lockfile, style, unit tests, native bridge, ABI probe | Pass | queued; prior run passed |
-| Playground compilation | Pass | queued; prior run passed |
+| Committed lockfile, style, unit tests, native bridge, ABI probe | Pass | Prior build passed; newer jobs cancelled |
+| Playground compilation | Pass | Prior build passed; newer jobs cancelled |
 | Bounded graphical smoke | Pass: exactly 3 frames | Not configured |
 
-Linux job 139438669650 logged "World tests passed.", "Raylib bridge ABI probe passed.", Mesa llvmpipe (LLVM 21.1.8) and "Rendered 3 frames successfully." The original GLX failure is resolved in hosted Linux CI. The Nix lockfile is tracked and validated against HEAD. Prior macOS job 139435973587 passed its build and ABI gates; the current macOS job must still be checked if unfinished.
+Linux job 139438669650 logged "World tests passed.", "Raylib bridge ABI probe passed.", Mesa llvmpipe (LLVM 21.1.8) and "Rendered 3 frames successfully." The original GLX failure is resolved in hosted Linux CI. The Nix lockfile is tracked and validated against HEAD. Prior macOS job 139435973587 passed its build and ABI gates; the newer macOS jobs were cancelled, so the earlier pass remains the available evidence.
 
 [Raylib binding assessment](raylib-bindings.md) records the provisional baseline decision. No comparative binding runtime test has been performed yet.
 
@@ -28,13 +29,13 @@ Expected: an 800x480 window, dark background, amber square, heading, arrow keys 
 
 Local QA report: all six Lisp source files compiled in 0–6 ms per file and the C bridge compiled and loaded. GLFW then failed to obtain an EGL display (65542), so no window was rendered. Fontconfig also emitted configuration warnings; these are not the fatal error. This is a host graphics initialization failure, not a Lisp compile failure.
 
-First diagnostic, with no Nix input changes: `nix develop -c env XDG_SESSION_TYPE=x11 make run`. GLFW 3.4 selects X11 when both backends are compiled in and DISPLAY is available. On Hyprland this uses XWayland. If that fails, try the existing software-rendering CI shell: `nix develop .#ci -c env XDG_SESSION_TYPE=x11 make run`. The latter may require additional cached packages. User subsequently confirmed the second command (CI software-rendering shell with X11 session selection) worked, without pulling the documentation-only commit. No screenshot or full log was uploaded due to connectivity. Window operation is user-reported; individual input/boundary/shutdown checks and hardware-accelerated rendering are not independently confirmed. The result supports using this route for interim development; it does not isolate the underlying EGL/vendor failure. Investigate host GL integration separately without forcing a dependency upgrade. Do not change system graphics drivers or lockfile merely to diagnose this.
+First diagnostic, with no Nix input changes: `nix develop -c env XDG_SESSION_TYPE=x11 make run`. GLFW 3.4 selects X11 when both backends are compiled in and DISPLAY is available. On Hyprland this uses XWayland. If that fails, try the existing software-rendering CI shell: `nix develop .#ci -c env XDG_SESSION_TYPE=x11 make run`. The latter may require additional cached packages. User subsequently confirmed the second command (CI software-rendering shell with X11 session selection) worked, without pulling the documentation-only commit. No screenshot or full log was uploaded due to connectivity. The user explicitly confirmed on 2026-11-25 that the square was controllable and the experiment worked. Accept local visual/input QA on that basis; viewport clamping is covered by the headless world tests and bounded shutdown by the Linux graphical smoke. Individual manual boundary and Escape checks were not separately reported. Hardware acceleration remains unverified. The result supports using this route for interim development; it does not isolate the underlying EGL/vendor failure. Investigate host GL integration separately without forcing a dependency upgrade. Do not change system graphics drivers or lockfile merely to diagnose this.
 
 ## Next unfinished gates
 
-1. Record the remaining input/boundary/exit checks by simple text confirmation when available; no upload required.
-2. Fix any real failures before marking experiment 01 complete.
-3. Advance to experiment 02 (rendering) and the narrow existing-binding trial after foundation acceptance.
+1. Advance to experiment 02: narrow existing-binding trial, texture rendering, layers, camera and draw ordering using disposable assets.
+2. Retain the passing baseline and headless/graphical CI checks; batch local visual QA.
+3. Track hardware-accelerated Linux graphics integration separately; the confirmed software-rendering path is sufficient for initial 2D experiments. Do not block rendering work on this or request duplicate foundation QA.
 
 Windows distribution and macOS graphical execution remain unverified. See [roadmap](roadmap.md).
 
