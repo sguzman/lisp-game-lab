@@ -34,6 +34,8 @@ jobs:
         run: nix develop -c sbcl --noinform --non-interactive --eval '(require :asdf)' --eval '(asdf:load-asd (truename "lisp-game-lab.asd"))' --eval '(asdf:load-system "lisp-game-lab/live")'
       - name: Compile live asset experiment
         run: nix develop -c sbcl --noinform --non-interactive --eval '(require :asdf)' --eval '(asdf:load-asd (truename "lisp-game-lab.asd"))' --eval '(asdf:load-system "lisp-game-lab/live-assets")'
+      - name: Compile interactive console experiment
+        run: nix develop -c sbcl --noinform --non-interactive --eval '(require :asdf)' --eval '(asdf:load-asd (truename "lisp-game-lab.asd"))' --eval '(asdf:load-system "lisp-game-lab/interactive")'
       - name: Virtual display smoke
         if: runner.os == 'Linux'
         run: |
@@ -43,3 +45,4 @@ jobs:
           xvfb-run -a -s '-screen 0 1280x720x24 +extension GLX' nix develop .#ci -c sh -eu -c 'for i in 1 2 3 4 5; do echo "Rendering trial $i/5"; make render-smoke; done'
           xvfb-run -a -s '-screen 0 1280x720x24 +extension GLX' nix develop .#ci -c make live-smoke
           xvfb-run -a -s '-screen 0 1280x720x24 +extension GLX' nix develop .#ci -c env ALSA_CONFIG_PATH="$PWD/scripts/alsa-null.conf" make assets-smoke
+          xvfb-run -a -s '-screen 0 1280x720x24 +extension GLX' nix develop .#ci -c make console-smoke

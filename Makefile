@@ -12,7 +12,7 @@ SHIM := $(BUILD)/liblab-raylib.so
 SHARED := -shared
 endif
 
-.PHONY: check test style format native abi run smoke render render-smoke live live-smoke assets assets-smoke clean
+.PHONY: check test style format native abi run smoke render render-smoke live live-smoke assets assets-smoke console console-smoke clean
 
 check: style test abi
 
@@ -57,6 +57,12 @@ assets: native
 
 assets-smoke: native
 	LAB_RAYLIB_BRIDGE="$(abspath $(SHIM))" LAB_SMOKE=1 $(SBCL) --noinform --non-interactive --load scripts/assets.lisp
+
+console: native
+	LAB_RAYLIB_BRIDGE="$(abspath $(SHIM))" $(SBCL) --noinform --non-interactive --load scripts/console.lisp
+
+console-smoke: native
+	LAB_RAYLIB_BRIDGE="$(abspath $(SHIM))" LAB_SMOKE=1 $(SBCL) --noinform --non-interactive --load scripts/console.lisp
 
 clean:
 	rm -rf $(BUILD)

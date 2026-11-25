@@ -22,12 +22,13 @@
                (:file "experiments/01-playground/main")))
 
 (asdf:defsystem "lisp-game-lab/tests"
-  :depends-on ("lisp-game-lab" "lisp-game-lab/reload" "lisp-game-lab/asset-reload")
+  :depends-on ("lisp-game-lab" "lisp-game-lab/reload" "lisp-game-lab/asset-reload" "lisp-game-lab/console")
   :serial t
   :components ((:file "tests/package")
                (:file "tests/scene")
                (:file "tests/reload")
                (:file "tests/assets")
+               (:file "tests/console")
                (:file "tests/world"))
   :perform (asdf:test-op (operation component)
              (declare (ignore operation component))
@@ -61,3 +62,15 @@
   :serial t
   :components ((:file "experiments/04-assets/package")
                (:file "experiments/04-assets/main")))
+
+(asdf:defsystem "lisp-game-lab/console"
+  :description "Opt-in local terminal evaluator and bounded command queue"
+  :depends-on ("lisp-game-lab")
+  :components ((:file "src/dev/console")))
+
+(asdf:defsystem "lisp-game-lab/interactive"
+  :description "Interactive development experiment"
+  :depends-on ("lisp-game-lab" "lisp-game-lab/raylib" "lisp-game-lab/console")
+  :serial t
+  :components ((:file "experiments/05-interactive/package")
+               (:file "experiments/05-interactive/main")))

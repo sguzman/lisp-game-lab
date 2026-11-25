@@ -26,6 +26,8 @@ The first playground is a small window with a movable square. Arrow keys move it
 | `make live-smoke` | Automated live reload demonstration |
 | `make assets` | Live texture, sound and data replacement |
 | `make assets-smoke` | Automated live asset demonstration |
+| `make console` | Opt-in local terminal Lisp REPL |
+| `make console-smoke` | Queued evaluation and shutdown smoke |
 | `make smoke` | Open a window, render three frames and exit (display required) |
 
 Run these from the repository root inside the Nix shell. Linux is the primary development platform; macOS and Windows are planned targets, not yet validated releases.

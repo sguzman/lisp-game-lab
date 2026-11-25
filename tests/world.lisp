@@ -23,4 +23,5 @@
   (test-scene)
   (test-reload)
   (test-assets)
+  (test-console)
   t)
