@@ -22,6 +22,8 @@ The first playground is a small window with a movable square. Arrow keys move it
 | `make run` | Interactive playground |
 | `make render` | Layered texture and camera playground |
 | `make render-smoke` | Bounded texture rendering smoke |
+| `make live` | Live behavior replacement playground |
+| `make live-smoke` | Automated live reload demonstration |
 | `make smoke` | Open a window, render three frames and exit (display required) |
 
 Run these from the repository root inside the Nix shell. Linux is the primary development platform; macOS and Windows are planned targets, not yet validated releases.

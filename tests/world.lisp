@@ -21,4 +21,5 @@
                (lab.core:world-y world))))
   (format t "~&World tests passed.~%")
   (test-scene)
+  (test-reload)
   t)

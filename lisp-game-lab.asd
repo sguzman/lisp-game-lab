@@ -22,10 +22,11 @@
                (:file "experiments/01-playground/main")))
 
 (asdf:defsystem "lisp-game-lab/tests"
-  :depends-on ("lisp-game-lab")
+  :depends-on ("lisp-game-lab" "lisp-game-lab/reload")
   :serial t
   :components ((:file "tests/package")
                (:file "tests/scene")
+               (:file "tests/reload")
                (:file "tests/world"))
   :perform (asdf:test-op (operation component)
              (declare (ignore operation component))
@@ -37,3 +38,14 @@
   :serial t
   :components ((:file "experiments/02-rendering/package")
                (:file "experiments/02-rendering/main")))
+
+(asdf:defsystem "lisp-game-lab/reload"
+  :description "Development-only transactional behavior replacement"
+  :components ((:file "src/dev/reload")))
+
+(asdf:defsystem "lisp-game-lab/live"
+  :description "Live behavior experiment"
+  :depends-on ("lisp-game-lab" "lisp-game-lab/raylib" "lisp-game-lab/reload")
+  :serial t
+  :components ((:file "experiments/03-live/package")
+               (:file "experiments/03-live/main")))

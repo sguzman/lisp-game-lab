@@ -48,3 +48,7 @@ See [Raylib binding assessment](raylib-bindings.md) for the pinned upstream sour
 ### Native floating-point environment
 
 SBCL enables floating-point traps that C graphics drivers may not expect. The graphical composition roots enter a scoped trap-masked environment before opening a window and restore the caller's settings on exit. Headless domain execution is unchanged. This is a mitigation for the observed intermittent native SIGFPE; the specific faulting instruction is not established.
+
+### Experiment 03: live behavior replacement
+
+The development-only ASDF system compiles a single anonymous lambda from a trusted local file with reader evaluation disabled. It validates its two integer results for all nine keyboard inputs before publishing the function at a frame boundary. The existing CLOS world is never passed into the candidate; only checked movement deltas are applied to it. Source text, not filesystem timestamp, determines whether to recompile. Runtime errors roll back to the prior function (or the baseline if needed). This is a deliberately narrow function replacement contract, not transactional arbitrary Lisp evaluation, a sandbox, or general class migration. Arbitrary trusted Lisp can still have side effects or hang; do not use untrusted files. No network or background thread is involved. The default world and rendering demos do not load the reload system.

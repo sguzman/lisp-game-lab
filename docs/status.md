@@ -84,3 +84,9 @@ The user confirmed arrow-key camera panning and supplied a screenshot showing th
 The original checkout had an unresolved HEAD and staged files. It was preserved; the user recovered a separate clean checkout, on main tracking origin/main, via a local clone of the previously fetched Git objects. Future QA should use that recovered checkout (lisp-game-lab-clean), not the original directory. No destructive cleanup is needed. Explicitly identify pull requirements; use fast-forward-only pulls and stop if they fail. No new QA or pull required for this documentation-only acceptance commit.
 
 Next: experiment 03, live code replacement with state identity and failure recovery.
+
+## Experiment 03 — initial implementation
+
+Added development-only anonymous behavior compilation, content-based file polling every 15 frames, validation over the finite input domain, frame-boundary publication and fallback on runtime error. The active CLOS world survives every change; only validated deltas reach it. An ignored build/live-behavior.lisp file is seeded if absent and never overwritten by an ordinary launch. A separate four-frame smoke writes valid, faster, malformed and repaired sources to build/live-smoke-behavior.lisp, asserting movement, revision and identity. Headless tests cover accepted/rejected forms, disabled read-time evaluation, output contract and runtime rollback. This is trusted local code, not a sandbox. No Nix or lockfile changes.
+
+Next: inspect CI and fix actual failures; batch local QA only after verified execution, using the recovered checkout and explicit fast-forward-only pull. No human action yet.
