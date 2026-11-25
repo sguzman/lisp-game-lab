@@ -26,7 +26,9 @@ nix develop -c make run
 
 Expected: an 800x480 window, dark background, amber square, heading, arrow keys move the square and stop at the viewport edges, Escape closes the window. Confirm that the window opens, the controls work, and the process exits cleanly. The ordinary shell does not force software rendering. If graphics initialization fails, retain the terminal output; use the separate CI shell as a diagnostic only (`nix develop .#ci -c make run`), not the preferred GPU configuration.
 
-No local visual/input QA has been reported yet. Linux on the user's host (including GPU integration) is not proven by hosted CI.
+Local QA report: all six Lisp source files compiled in 0–6 ms per file and the C bridge compiled and loaded. GLFW then failed to obtain an EGL display (65542), so no window was rendered. Fontconfig also emitted configuration warnings; these are not the fatal error. This is a host graphics initialization failure, not a Lisp compile failure.
+
+First diagnostic, with no Nix input changes: `nix develop -c env XDG_SESSION_TYPE=x11 make run`. GLFW 3.4 selects X11 when both backends are compiled in and DISPLAY is available. On Hyprland this uses XWayland. If that fails, try the existing software-rendering CI shell: `nix develop .#ci -c env XDG_SESSION_TYPE=x11 make run`. The latter may require additional cached packages. Neither workaround has been tested on the user's host; investigate host GL vendor/driver integration if needed. Do not change system graphics drivers or lockfile merely to diagnose this.
 
 ## Next unfinished gates
 
@@ -38,4 +40,4 @@ Windows distribution and macOS graphical execution remain unverified. See [roadm
 
 ## Nix release policy
 
-Per user direction, flake.nix now names nixos-26.05 and flake.lock retains the identical previously verified locked revision and hash. Only the original input reference metadata changed; CI must confirm no lockfile rewrite. The user reported the local build is underway; visual/input QA remains pending.
+Per user direction, flake.nix now names nixos-26.05 and flake.lock retains the identical previously verified locked revision and hash. Only the original input reference metadata changed; CI must confirm no lockfile rewrite. The local build completed; graphical initialization failed as described above.
